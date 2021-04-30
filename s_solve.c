@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "algx.h"
+#include "ll.h"
 
 int main(){
     
@@ -23,8 +24,9 @@ int main(){
     insert_node(matrix, 4, 6, 1);
     insert_node(matrix, 5, 1, 1);
     insert_node(matrix, 5, 6, 1);
-
     alg_x(*matrix);
+    print_matrix(matrix);
     delete_matrix(matrix);
+
     return 0;
 }

@@ -3,14 +3,15 @@
 #include <assert.h>
 #include "dlinks_matrix.h"
 
-Node* create_node(int, int, int, int, int, Matrix*);
 void init_matrix(Matrix*);
-Node* search_header(Matrix*, int, int);
+Node* create_node(Matrix*, int, int, int, int, int);
 
 
 //Returns initialized Matrix struct of size [num_rows x num_cols]
 Matrix* create_matrix(int num_rows, int num_cols){
     Matrix* mx = malloc(sizeof(Matrix));
+    mx->rows = malloc(sizeof(Node*) * num_rows);
+    mx->cols = malloc(sizeof(Node*) * num_cols);
     mx->num_rows = num_rows;
     mx->num_cols = num_cols;
     init_matrix(mx);
@@ -23,7 +24,7 @@ void insert_node(Matrix* mx, int row, int col, int value){
     assert(row >= 0 && col >= 0 && row < mx->num_rows && col < mx->num_cols);
     
     //ceate new node
-    Node* new_node = create_node(row, col, 1, value, -1, mx);
+    Node* new_node = create_node(mx, row, col, 1, value, -1);
 
     //iterate through row to find correct placement of node in row
     Node* itr_n = mx->rows[row];
@@ -128,60 +129,40 @@ void delete_matrix(Matrix* mx){
     free(mx);
 }
 
-
-Node* create_node(int row, int col, int type, int value, int count, Matrix* mx){
+Node* create_node(Matrix* mx, int row, int col, int type, int value, int count){
     Node* node = malloc(sizeof(Node));
-    node->matrix = mx;
-    node->row = row;
-    node->col = col;
-    node->type = type;
-    node->count = count;
-    node->value = value;
-    node->up = NULL;
-    node->down = NULL;
-    node->left = NULL;
-    node->right = NULL;
+    node->row=row;
+    node->col=col;
+    node->type=type;
+    node->value=value;
+    node->count=count;
+    node->up=NULL;
+    node->down=NULL;
+    node->left=NULL;
+    node->right=NULL;
+    node->matrix=mx;
     return node;
 }
 
 //Initialize the Row and Column headers of the Matrix
 void init_matrix(Matrix* mx){
-    mx->rows = create_node(0, -1, 2, -1, 0, mx);
-    Node* prev_node = mx->rows;
+    mx->rows[0] = create_node(mx, 0, -1, 2, -1, 0);
     //instantiate array of row header nodes
     for(int i=1; i<mx->num_rows; i++){
-        Node* node = create_node(i, -1, 2, -1, 0, mx);
-        node->up = prev_node;
-        prev_node->down = node;
-        prev_node = node;
+        Node* node = create_node(mx, i, -1, 2, -1, 0);
+        node->up = mx->rows[i-1];
+        mx->rows[i-1]->down = node;
+        mx->rows[i] = node;
     }
 
-    mx->cols = create_node(-1, 0, 2, -1, 0, mx);
-    prev_node = mx->cols;
+    mx->cols[0] = create_node(mx, -1, 0, 2, -1, 0);
     //instantiate array of column header nodes
-    for(int i=0; i<mx->num_cols; i++){
-        Node* node = create_node(-1, i ,2, -1, 0, mx);
-        node->left = prev_node;
-        prev_node->right = node;
-        prev_node = node;
+    for(int i=1; i<mx->num_cols; i++){
+        Node* node = create_node(mx, -1, i, 2, -1, 0);
+        node->left = mx->cols[i-1];
+        mx->cols[i-1]->right = node;
+        mx->cols[i] = node;
     }
-}
-
-Node* search_header(Matrix* mx, int indx, int type){
-    assert(type==1 || type==2);
-    switch (type)
-    {
-    case 1:
-        assert(indx < mx->num_rows);
-        Node* itr = mx->rows;
-
-        break;
-    
-    case 2:
-    assert(indx < mx->num_cols);
-        break;
-    
-    default:
-        break;
-    }
+    mx->row_head = mx->rows[0];
+    mx->col_head = mx->cols[0];
 }

@@ -18,7 +18,8 @@ struct node{
 };
 
 struct matrix{
-    Node* rows, *cols;
+    Node** rows, **cols;
+    Node* row_head, *col_head;
     int num_rows, num_cols;
 };
 

@@ -27,102 +27,100 @@ void insert_node(Matrix* mx, int row, int col, int value){
     Node* new_node = create_node(mx, row, col, 1, value, -1);
 
     //iterate through row to find correct placement of node in row
-    Node* itr_n = mx->rows[row];
-    while(itr_n->right != NULL && itr_n->right->col < col){
-        itr_n = itr_n->right;
+    Node* itr = mx->rows[row];
+    Node* start = itr;
+    while(itr->right != start && itr->right->col < col){
+        itr = itr->right;
     }
-    if(itr_n->right != NULL && itr_n->right->col == col){
-        itr_n->right->value = value;
+    //if node at this position already exists, reassign value and leave
+    if(itr->right->col == col){
+        itr->right->value = value;
         return;
     }
     //reassign left and right pointers
-    new_node->right = itr_n->right;
-    new_node->left = itr_n;
-    itr_n->right = new_node;
-    if(new_node->right != NULL){
-        new_node->right->left = new_node;
-    }
+    new_node->right = itr->right;
+    new_node->left = itr;
+    itr->right = new_node;
+    new_node->right->left = new_node;
 
     //iterate through column to find correct placement of node in column
-    itr_n = mx->cols[col];
-    while(itr_n->down != NULL && itr_n->down->row < row){
-        itr_n = itr_n->down;
+    itr = mx->cols[col];
+    start = itr;
+    while(itr->down != start && itr->down->row < row){
+        itr = itr->down;
     }
     //reassign up and down pointers
-    new_node->down = itr_n->down;
-    new_node->up = itr_n;
-    itr_n->down = new_node;
-    if(new_node->down != NULL){
-        new_node->down->up = new_node;
-    }
+    new_node->down = itr->down;
+    new_node->up = itr;
+    itr->down = new_node;
+    new_node->down->up = new_node;
 
     mx->rows[row]->count++;
     mx->cols[col]->count++;
 
 }
-
+ 
 //Remove node at row, col
 //If no node exists at this position, do nothing
 void remove_node(Matrix* mx, int row, int col){
     assert(row >= 0 && col >= 0 && row < mx->num_rows && col < mx->num_cols);
 
     //iterate through row to find node to remove
-    Node* itr_n = mx->rows[row];
-    while(itr_n->right != NULL && itr_n->right->col <= col){
-        itr_n = itr_n->right;
+    Node* itr = mx->rows[row];
+    Node* start = itr;
+    while(itr->right != start && itr->right->col <= col){
+        itr = itr->right;
     }
-    //if node doesn't exist, quit
-    if(itr_n->col != col){
+    //if node doesn't exist, leave
+    if(itr->col != col){
         printf("Node doesn't exist\n");
         return;
     }
-    //reassign left and right pointers
-    itr_n->left->right = itr_n->right;
-    if(itr_n->right != NULL){
-        itr_n->right->left = itr_n->left;
-    }
-    //reassign up and down pointers
-    itr_n->up->down = itr_n->down;
-    if(itr_n->down != NULL){
-        itr_n->down->up = itr_n->up;
-    }
+    //reassign pointers
+    itr->left->right = itr->right;
+    itr->right->left = itr->left;
+    itr->up->down = itr->down;
+    itr->down->up = itr->up;
 
     mx->rows[row]->count--;
     mx->cols[col]->count--;
-    free(itr_n);
+    free(itr);
 }
 
 void print_matrix(Matrix* mx){
-    Node* itr_n;
+    Node* itr, *start;
     int i, j;
     for(i=0; i<mx->num_rows; i++){
-        itr_n = mx->rows[i];
+        itr = mx->rows[i];
+        start = itr;
         for(j=0; j<mx->num_cols; j++){
-            if(itr_n->right == NULL || itr_n->right->col > j){
+            if(itr->right == start || itr->right->col > j){
                 printf("0 ");
             }
             else{
-                printf("%d ", itr_n->right->value);
-                itr_n = itr_n->right;
+                printf("%d ", itr->right->value);
+                itr = itr->right;
             }
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 void delete_matrix(Matrix* mx){
     int i;
-    Node* itr_n;
+    Node* itr, *start;
     for(i=0; i<mx->num_cols; i++){
         free(mx->cols[i]);
     }
     for(i=0; i<mx->num_rows; i++){
-        itr_n = mx->rows[i];
-        while(itr_n->right != NULL){
-            itr_n = itr_n->right;
-            free(itr_n->left);
+        itr = mx->rows[i]->right;
+        start = mx->rows[i]->right;
+        while(itr->right != start){
+            itr = itr->right;
+            free(itr->left);
         }
-        free(itr_n);
+        free(itr);
     }
     free(mx->rows);
     free(mx->cols);
@@ -146,23 +144,36 @@ Node* create_node(Matrix* mx, int row, int col, int type, int value, int count){
 
 //Initialize the Row and Column headers of the Matrix
 void init_matrix(Matrix* mx){
-    mx->rows[0] = create_node(mx, 0, -1, 2, -1, 0);
     //instantiate array of row header nodes
+    mx->rows[0] = create_node(mx, 0, -1, 2, -1, 0);
+    mx->rows[0]->right = mx->rows[0];
+    mx->rows[0]->left = mx->rows[0];
     for(int i=1; i<mx->num_rows; i++){
         Node* node = create_node(mx, i, -1, 2, -1, 0);
         node->up = mx->rows[i-1];
         mx->rows[i-1]->down = node;
+        node->right = node;
+        node->left = node;
         mx->rows[i] = node;
     }
+    mx->rows[mx->num_rows-1]->down = mx->rows[0];
+    mx->rows[0]->up = mx->rows[mx->num_rows-1];
 
-    mx->cols[0] = create_node(mx, -1, 0, 2, -1, 0);
     //instantiate array of column header nodes
+    mx->cols[0] = create_node(mx, -1, 0, 2, -1, 0);
+    mx->cols[0]->down = mx->cols[0];
+    mx->cols[0]->up = mx->cols[0];
     for(int i=1; i<mx->num_cols; i++){
         Node* node = create_node(mx, -1, i, 2, -1, 0);
         node->left = mx->cols[i-1];
         mx->cols[i-1]->right = node;
+        node->down = node;
+        node->up = node;
         mx->cols[i] = node;
     }
+    mx->cols[mx->num_cols-1]->right = mx->cols[0];
+    mx->cols[0]->left = mx->cols[mx->num_cols-1];
+
     mx->row_head = mx->rows[0];
     mx->col_head = mx->cols[0];
 }

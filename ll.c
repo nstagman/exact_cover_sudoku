@@ -4,30 +4,31 @@
 #include "ll.h"
 
 
-List* create_list(){
-    List* list = malloc(sizeof(List));
+l_list* create_list(){
+    l_list* list = malloc(sizeof(l_list));
     list->head = NULL;
     list->tail = NULL;
     list->num_nodes = 0;
     return list;
 }
 
-void list_append(List* list, void* data){
-    l_node* node = malloc(sizeof(l_node));
+void list_append(l_list* list, void* data){
+    ll_node* node = malloc(sizeof(ll_node));
     node->data = data;
+    node->next = NULL;
+    node->prev = NULL;
     list->num_nodes++;
     if(list->num_nodes == 1){
         list->head = node;
         list->tail = node;
         return;
     }
-    list->tail->prev->next = node;
+    list->tail->next = node;
     node->prev = list->tail;
-    node->next = NULL;
     list->tail = node;
 }
 
-void list_pop(List* list){
+void list_pop(l_list* list){
     assert(list->head != NULL && list->tail != NULL);
     if(list->num_nodes == 1){
         free(list->head);
@@ -35,7 +36,7 @@ void list_pop(List* list){
         list->tail = NULL;
     }
     else{
-        l_node* n = list->tail;
+        ll_node* n = list->tail;
         list->tail->prev->next = NULL;
         list->tail = list->tail->prev;
         free(n);
@@ -43,14 +44,12 @@ void list_pop(List* list){
     list->num_nodes--;
 }
 
-void delete_list(List* list){
+void delete_list(l_list* list){
     if(list->head != NULL){
-        l_node* itr = list->head;
-        l_node* prev = list->head;
+        ll_node* itr = list->head;
         while(itr->next != NULL){
             itr = itr->next;
-            free(prev);
-            prev = itr;
+            free(itr->prev);
         }
         free(itr);
     }

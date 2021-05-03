@@ -19,7 +19,7 @@ struct node{
 
 struct matrix{
     Node** rows, **cols;
-    Node* row_head, *col_head;
+    Node* root;
     int num_rows, num_cols;
 };
 

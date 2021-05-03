@@ -2,6 +2,6 @@
 #define ALGX_H
 #include "dlinks_matrix.h"
 
-void alg_x(Matrix);
+void alg_x_search(Matrix);
 
 #endif

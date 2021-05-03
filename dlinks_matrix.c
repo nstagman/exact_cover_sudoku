@@ -124,6 +124,7 @@ void delete_matrix(Matrix* mx){
     }
     free(mx->rows);
     free(mx->cols);
+    free(mx->root);
     free(mx);
 }
 
@@ -144,10 +145,13 @@ Node* create_node(Matrix* mx, int row, int col, int type, int value, int count){
 
 //Initialize the Row and Column headers of the Matrix
 void init_matrix(Matrix* mx){
+    mx->root = create_node(mx, -1, -1, 3, -1, -1); //create root of matrix
     //instantiate array of row header nodes
     mx->rows[0] = create_node(mx, 0, -1, 2, -1, 0);
     mx->rows[0]->right = mx->rows[0];
     mx->rows[0]->left = mx->rows[0];
+    mx->rows[0]->up = mx->root;
+    mx->root->down = mx->rows[0];
     for(int i=1; i<mx->num_rows; i++){
         Node* node = create_node(mx, i, -1, 2, -1, 0);
         node->up = mx->rows[i-1];
@@ -156,13 +160,15 @@ void init_matrix(Matrix* mx){
         node->left = node;
         mx->rows[i] = node;
     }
-    mx->rows[mx->num_rows-1]->down = mx->rows[0];
-    mx->rows[0]->up = mx->rows[mx->num_rows-1];
+    mx->rows[mx->num_rows-1]->down = mx->root; //last row_header.down points to root
+    mx->root->up = mx->rows[mx->num_rows-1]; //root.up points to last row_header
 
     //instantiate array of column header nodes
     mx->cols[0] = create_node(mx, -1, 0, 2, -1, 0);
     mx->cols[0]->down = mx->cols[0];
     mx->cols[0]->up = mx->cols[0];
+    mx->cols[0]->left = mx->root;
+    mx->root->right = mx->cols[0];
     for(int i=1; i<mx->num_cols; i++){
         Node* node = create_node(mx, -1, i, 2, -1, 0);
         node->left = mx->cols[i-1];
@@ -171,9 +177,6 @@ void init_matrix(Matrix* mx){
         node->up = node;
         mx->cols[i] = node;
     }
-    mx->cols[mx->num_cols-1]->right = mx->cols[0];
-    mx->cols[0]->left = mx->cols[mx->num_cols-1];
-
-    mx->row_head = mx->rows[0];
-    mx->col_head = mx->cols[0];
+    mx->cols[mx->num_cols-1]->right = mx->root; //last col_header.right points to root
+    mx->root->left = mx->cols[mx->num_cols-1]; //root.left points to last col_header
 }

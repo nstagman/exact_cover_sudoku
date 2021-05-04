@@ -1,6 +1,6 @@
 #ifndef DLINKS_MATRIX_H
 #define DLINKS_MATRIX_H
-
+#include <stdbool.h>
 
 typedef struct matrix Matrix;
 typedef struct node Node;
@@ -22,5 +22,18 @@ struct matrix{
     Node* root;
     int num_rows, num_cols;
 };
+
+static inline bool matrix_is_empty(Matrix* matrix){
+    return matrix->root->right == matrix->root;
+}
+
+static inline Node* column_of(Node* node){
+    if(node->col==-1) { return node->matrix->root; }
+    return node->matrix->cols[node->col];
+}
+
+static inline bool column_is_covered(Node* node){
+    return !(column_of(node)->right->left == column_of(node));
+}
 
 #endif

@@ -27,8 +27,10 @@ int main(){
 
     print_matrix(matrix);
 
-    alg_x_search(*matrix);
+    bool x = alg_x_search(matrix);
 
+    // print_matrix(matrix);
+    printf("%d\n", x);
     delete_matrix(matrix);
 
     return 0;

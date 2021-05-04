@@ -1,6 +1,6 @@
 EXE := s_solve
 CC := gcc
-CFLAGS := -Wall -Wextra
+CFLAGS := -O0 -Wall -Wextra
 SRC := .c
 
 OBJS := $(patsubst %$(SRC), %.o, $(wildcard *$(SRC)))

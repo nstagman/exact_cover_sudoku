@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "algx.h"
-#include "ll.h"
+#include "lifo.h"
 
 int main(){
     
     Matrix* matrix = create_matrix(6,7);
+    lifo* stack = create_stack();
     
     insert_node(matrix, 0, 0, 1);
     insert_node(matrix, 0, 3, 1);
@@ -25,13 +26,15 @@ int main(){
     insert_node(matrix, 5, 1, 1);
     insert_node(matrix, 5, 6, 1);
 
-    print_matrix(matrix);
+    bool x = alg_x_search(matrix, stack);
 
-    bool x = alg_x_search(matrix);
+    for(lifo_node* itr=stack->head; itr!=NULL; itr=itr->next){
+        printf("%c, ", itr->data->row+65);
+    }
+    printf("\n");
 
-    // print_matrix(matrix);
-    printf("%d\n", x);
     delete_matrix(matrix);
+    delete_stack(stack);
 
     return 0;
 }

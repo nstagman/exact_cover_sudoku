@@ -21,6 +21,7 @@ struct matrix{
     Node** rows, **cols;
     Node* root;
     int num_rows, num_cols;
+    bool solved;
 };
 
 static inline bool matrix_is_empty(Matrix* matrix){

@@ -9,7 +9,7 @@ lifo* create_stack(){
     return stack;
 }
 
-void push_stack(lifo* stack, void* data){
+void push_stack(lifo* stack, Node* data){
     lifo_node* node = malloc(sizeof(lifo_node));
     node->data = data;
     node->next = stack->head;

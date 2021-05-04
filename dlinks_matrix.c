@@ -89,6 +89,11 @@ void remove_node(Matrix* mx, int row, int col){
 
 void print_matrix(Matrix* mx){
     Node* vert_itr, *horiz_itr;
+    printf("R| ");
+    for(horiz_itr=mx->root->right; horiz_itr!=mx->root; horiz_itr=horiz_itr->right){
+        printf("%d ", horiz_itr->col);
+    }
+    printf("\n");
     for(vert_itr=mx->root->down; vert_itr!=mx->root; vert_itr=vert_itr->down){
         printf("%c: ", vert_itr->row+65);
         horiz_itr = vert_itr;
@@ -180,4 +185,5 @@ void init_matrix(Matrix* mx){
     mx->cols[mx->num_cols-1]->right = mx->root; //last col_header.right points to root
     mx->root->left = mx->cols[mx->num_cols-1]; //root.left points to last col_header
     mx->root->count = 0;
+    mx->solved = false;
 }

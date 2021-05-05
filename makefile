@@ -1,4 +1,4 @@
-EXE := s_solve
+EXE := sudoku_solver
 CC := gcc
 CFLAGS := -O0 -Wall -Wextra
 SRC := .c

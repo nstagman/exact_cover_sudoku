@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "algx.h"
-#include "lifo.h"
 
 int main(){
     
@@ -27,12 +26,12 @@ int main(){
     insert_node(matrix, 5, 6, 1);
 
     alg_x_search(matrix, stack);
+    print_matrix(matrix);
     printf("Solution: ");
     for(lifo_node* itr=stack->head; itr!=NULL; itr=itr->next){
         printf("%c, ", itr->data->row+65);
     }
     printf("\n");
-    print_matrix(matrix);
 
     delete_matrix(matrix);
     delete_stack(stack);

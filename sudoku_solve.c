@@ -1,4 +1,6 @@
-#include "p_convert.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "sudoku_solve.h"
 
 
 Matrix* sud2matrix(int* sudoku_list, int size){

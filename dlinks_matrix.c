@@ -87,15 +87,17 @@ void remove_node(Matrix* mx, int row, int col){
     free(itr);
 }
 
+//print current matrix
+//if a row or column has a been covered, it will not be displayed
 void print_matrix(Matrix* mx){
     Node* vert_itr, *horiz_itr;
-    printf("R| ");
+    printf("\033[4mR| ");
     for(horiz_itr=mx->root->right; horiz_itr!=mx->root; horiz_itr=horiz_itr->right){
         printf("%d ", horiz_itr->col);
     }
-    printf("\n");
+    printf("\033[24m\n");
     for(vert_itr=mx->root->down; vert_itr!=mx->root; vert_itr=vert_itr->down){
-        printf("%c: ", vert_itr->row+65);
+        printf("%c| ", vert_itr->row+65);
         horiz_itr = vert_itr;
         for(int j=0; j<mx->num_cols; j++){
             if(column_is_covered(mx->cols[j])) { continue; }
@@ -109,9 +111,9 @@ void print_matrix(Matrix* mx){
         }
         printf("\n");
     }
-    printf("\n");
 }
 
+//free remaining matrix memory
 void delete_matrix(Matrix* mx){
     int i;
     Node* itr, *start;

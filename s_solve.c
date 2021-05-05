@@ -26,12 +26,13 @@ int main(){
     insert_node(matrix, 5, 1, 1);
     insert_node(matrix, 5, 6, 1);
 
-    bool x = alg_x_search(matrix, stack);
-
+    alg_x_search(matrix, stack);
+    printf("Solution: ");
     for(lifo_node* itr=stack->head; itr!=NULL; itr=itr->next){
         printf("%c, ", itr->data->row+65);
     }
     printf("\n");
+    print_matrix(matrix);
 
     delete_matrix(matrix);
     delete_stack(stack);

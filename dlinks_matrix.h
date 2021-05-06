@@ -2,6 +2,9 @@
 #define DLINKS_MATRIX_H
 #include <stdbool.h>
 
+#define uln "\033[4m"
+#define res "\033[0m"
+
 typedef struct matrix Matrix;
 typedef struct node Node;
 

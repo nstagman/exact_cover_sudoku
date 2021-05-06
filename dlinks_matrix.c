@@ -82,9 +82,9 @@ void remove_node(Matrix* mx, int row, int col){
 //if a row or column has a been covered, it will not be displayed
 void print_matrix(Matrix* mx){
     Node* vert_itr, *horiz_itr;
-    printf("\033[4mR| ");
+    printf(uln"R| ");
     for(horiz_itr=mx->root->right; horiz_itr!=mx->root; horiz_itr=horiz_itr->right){ printf("%d ", horiz_itr->col); }
-    printf("\033[24m\n");
+    printf(res"\n");
     for(vert_itr=mx->root->down; vert_itr!=mx->root; vert_itr=vert_itr->down){
         printf("%c| ", vert_itr->row+65);
         horiz_itr = vert_itr;

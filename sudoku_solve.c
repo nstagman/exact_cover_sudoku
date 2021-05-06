@@ -32,7 +32,7 @@ Matrix* sud2matrix(int* sudoku_list, int size){
     int row = 0;
     //iterate through puzzle list
     for(int i=0; i<num_cells; i++){
-        //if no value assigned to cell, populate all rows representing candidate values for cell
+        //if no value assigned to cell, populate all rows representing all possible candidate values for cell
         if(sudoku_list[i] == 0){
             for(int j=0; j<size; j++){
                 row = i*size+j;
@@ -42,7 +42,7 @@ Matrix* sud2matrix(int* sudoku_list, int size){
                 insert_node(matrix, row, box_constraint(row, size), 1);
             }
         }
-        //otherwise only populate the row represnting the known assigned value
+        //otherwise only populate the row representing the known assigned value
         else{
             row = i*size+sudoku_list[i]-1;
             insert_node(matrix, row, one_constraint(row, size), 1);
@@ -70,8 +70,23 @@ bool solve_puzzle(int* puzzle, int size, int* solution){
     lifo* solution_stack = create_stack();
     bool found = alg_x_search(puzzle_matrix, solution_stack);
     if(found) { decode_solution(solution_stack, size, solution); }
-    
+
     delete_matrix(puzzle_matrix);
     delete_stack(solution_stack);
     return found;
+}
+
+//prints sudoku puzzle
+void print_puzzle(int* solution, int size){
+    for(int i=0; i<size; i++){
+        printf(uln"   ");
+    }
+    printf("    "res"");
+    for(int i=0; i<size*size; i++){
+        if((i % (int)sqrt(size) == 0 && i != 0)){ printf("|"); }
+        if(i/size % (int)sqrt(size) == 2){ printf(uln""); }
+        if(i % size == 0) { printf("\n|"); }
+        printf("%3d"res, solution[i]);
+    }
+    printf("|\n");
 }

@@ -1,10 +1,11 @@
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "sudoku_solve.h"
 
 
 int main(){
+    struct timespec start, end;
     int size = 9;
     int solution[size*size];
     int puzzle[] =
@@ -18,14 +19,19 @@ int main(){
      2,0,0,0,0,0,0,0,8,
      0,0,5,8,0,0,2,1,0};
     
+    clock_gettime(CLOCK_REALTIME, &start);
     bool solved = solve_puzzle(puzzle, size, solution);
+    clock_gettime(CLOCK_REALTIME, &end);
+    double t = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec)/1000000000.0;
     
+    printf("Puzzle:\n");
+    print_puzzle(puzzle, size);
     if(solved){
-        for(int i=0; i<size*size; i++){
-            if(i % size == 0) { printf("\n"); }
-            printf("%d ", solution[i]);
-        }
-        printf("\n");
+        printf("\nSolution Found In: %f Seconds\n", t);
+        print_puzzle(solution, size);
+    }
+    else{
+        printf("No Solution Found\n");
     }
 
     return 0;

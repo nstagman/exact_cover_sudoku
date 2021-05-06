@@ -1,6 +1,7 @@
 EXE := sudoku_solver
 CC := gcc
 CFLAGS := -O0 -Wall -Wextra
+LFLAGS := -lm
 SRC := .c
 
 OBJS := $(patsubst %$(SRC), %.o, $(wildcard *$(SRC)))
@@ -10,7 +11,7 @@ run: $(EXE)
 	./$(EXE)
 
 $(EXE): $(OBJS)
-	$(CC) $(CFLAGS) -o $(EXE) $(OBJS)
+	$(CC) $(CFLAGS) -o $(EXE) $(OBJS) $(LFLAGS)
 
 -include $(DEPS)
 %.o: %$(SRC)

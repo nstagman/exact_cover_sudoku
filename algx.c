@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "algx.h"
 
 
@@ -86,7 +86,7 @@ bool alg_x_search(Matrix* matrix, lifo* solutions){
         //if solution found on this branch, leave loop and stop searching
         if(alg_x_search(matrix, solutions)) { break; }
 
-        //solution not found on this iterations branch, need to revert changes to matrix
+        //solution not found on this iteration's branch, need to revert changes to matrix
         //remove row from solutions, then uncover columns from this iteration
         pop_stack(solutions);
         horiz_itr = vert_itr->left;
@@ -99,50 +99,3 @@ bool alg_x_search(Matrix* matrix, lifo* solutions){
     }
     return matrix->solved;
 }
-
-
-
-// printf("n: ");
-// for(Node* itr=matrix->root->right; itr!=matrix->root; itr=itr->right){
-//     printf("%d ", itr->count);
-// }
-// printf("\n");
-// print_matrix(matrix);
-
-// bool alg_x_search(Matrix* matrix, lifo* solutions){
-//     //if matrix is empty then an exact cover exists, return true
-//     if(matrix_is_empty(matrix)) {
-//         matrix->solved = true;
-//         return true;
-//     }
-//     //select the column with least number of 1's
-//     Node* selected_col = select_column(matrix);
-//     //if selected column has 0 ones, then this branch has failed
-//     if(selected_col->count < 1) { return false; }
-
-//     Node* horiz_itr, *vert_itr=selected_col->down;
-//     //iterate down from selected column head
-//     while(vert_itr != selected_col && !matrix->solved){
-//         //add selected row to solutions LIFO
-//         push_stack(solutions, matrix->rows[vert_itr->row]);
-
-//         horiz_itr = vert_itr;
-//         //iterate right from vertical iterator, cover each column
-//         do{
-//             if(horiz_itr->col >= 0){ cover(horiz_itr); } //skip column of row headers
-//         }while((horiz_itr = horiz_itr->right) != vert_itr);
-
-//         //search this matrix again after covering
-//         //if solution not found on this branch, pop row from solutions LIFO
-//         if(!alg_x_search(matrix, solutions)) { pop_stack(solutions); }
-
-//         horiz_itr = vert_itr->left;
-//         //iterate left from the last column that was covered, uncover each column
-//         do{
-//             if(horiz_itr->col >= 0){ uncover(horiz_itr); } //skip column of row headers
-//         }while((horiz_itr = horiz_itr->left) != vert_itr->left);
-
-//         vert_itr = vert_itr->down;
-//     }
-//     return matrix->solved;
-// }

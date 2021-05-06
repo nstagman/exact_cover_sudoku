@@ -1,45 +1,32 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "algx.h"
 #include "sudoku_solve.h"
 
+
 int main(){
+    int size = 9;
+    int solution[size*size];
+    int puzzle[] =
+    {0,4,3,0,0,7,8,0,0,
+     1,0,0,0,0,0,0,0,4,
+     0,6,8,0,0,0,0,0,0,
+     0,0,0,0,3,1,0,8,6,
+     0,0,9,2,0,5,1,0,0,
+     4,8,0,7,9,0,0,0,0,
+     0,0,0,0,0,0,6,5,0,
+     2,0,0,0,0,0,0,0,8,
+     0,0,5,8,0,0,2,1,0};
     
-    Matrix* matrix = create_matrix(6,7);
-    lifo* stack = create_stack();
+    bool solved = solve_puzzle(puzzle, size, solution);
     
-    insert_node(matrix, 0, 0, 1);
-    insert_node(matrix, 0, 3, 1);
-    insert_node(matrix, 0, 6, 1);
-    insert_node(matrix, 1, 0, 1);
-    insert_node(matrix, 1, 3, 1);
-    insert_node(matrix, 2, 3, 1);
-    insert_node(matrix, 2, 4, 1);
-    insert_node(matrix, 2, 6, 1);
-    insert_node(matrix, 3, 2, 1);
-    insert_node(matrix, 3, 4, 1);
-    insert_node(matrix, 3, 5, 1);
-    insert_node(matrix, 4, 1, 1);
-    insert_node(matrix, 4, 2, 1);
-    insert_node(matrix, 4, 5, 1);
-    insert_node(matrix, 4, 6, 1);
-    insert_node(matrix, 5, 1, 1);
-    insert_node(matrix, 5, 6, 1);
-
-    print_matrix(matrix);
-    printf("\n");
-    alg_x_search(matrix, stack);
-    print_matrix(matrix);
-    printf("Solution: ");
-    for(lifo_node* itr=stack->head; itr!=NULL; itr=itr->next){
-        printf("%c, ", itr->data->row+65);
+    if(solved){
+        for(int i=0; i<size*size; i++){
+            if(i % size == 0) { printf("\n"); }
+            printf("%d ", solution[i]);
+        }
+        printf("\n");
     }
-    printf("\n");
-
-    delete_matrix(matrix);
-    delete_stack(stack);
-
-    printf("\n%d\n", 7/4);
 
     return 0;
 }

@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "dlinks_matrix.h"
 
 
@@ -29,9 +29,7 @@ void insert_node(Matrix* mx, int row, int col, int value){
     //iterate through row to find correct placement of node in row
     Node* itr = mx->rows[row];
     Node* start = itr;
-    while(itr->right != start && itr->right->col < col){
-        itr = itr->right;
-    }
+    while(itr->right != start && itr->right->col < col){ itr = itr->right; }
     //if node at this position already exists, reassign value and leave
     if(itr->right->col == col){
         itr->right->value = value;
@@ -46,9 +44,7 @@ void insert_node(Matrix* mx, int row, int col, int value){
     //iterate through column to find correct placement of node in column
     itr = mx->cols[col];
     start = itr;
-    while(itr->down != start && itr->down->row < row){
-        itr = itr->down;
-    }
+    while(itr->down != start && itr->down->row < row){ itr = itr->down; }
     //reassign up and down pointers
     new_node->down = itr->down;
     new_node->up = itr;
@@ -68,14 +64,9 @@ void remove_node(Matrix* mx, int row, int col){
     //iterate through row to find node to remove
     Node* itr = mx->rows[row];
     Node* start = itr;
-    while(itr->right != start && itr->right->col <= col){
-        itr = itr->right;
-    }
+    while(itr->right != start && itr->right->col <= col){ itr = itr->right; }
     //if node doesn't exist, leave
-    if(itr->col != col){
-        printf("Node doesn't exist\n");
-        return;
-    }
+    if(itr->col != col){ return; }
     //reassign pointers
     itr->left->right = itr->right;
     itr->right->left = itr->left;
@@ -92,18 +83,14 @@ void remove_node(Matrix* mx, int row, int col){
 void print_matrix(Matrix* mx){
     Node* vert_itr, *horiz_itr;
     printf("\033[4mR| ");
-    for(horiz_itr=mx->root->right; horiz_itr!=mx->root; horiz_itr=horiz_itr->right){
-        printf("%d ", horiz_itr->col);
-    }
+    for(horiz_itr=mx->root->right; horiz_itr!=mx->root; horiz_itr=horiz_itr->right){ printf("%d ", horiz_itr->col); }
     printf("\033[24m\n");
     for(vert_itr=mx->root->down; vert_itr!=mx->root; vert_itr=vert_itr->down){
         printf("%c| ", vert_itr->row+65);
         horiz_itr = vert_itr;
         for(int j=0; j<mx->num_cols; j++){
             if(column_is_covered(mx->cols[j])) { continue; }
-            if(horiz_itr->right->col > j || horiz_itr->right->col == -1){
-                printf("0 ");
-            }
+            if(horiz_itr->right->col > j || horiz_itr->right->col == -1){ printf("0 "); }
             else{
                 printf("%d ", horiz_itr->right->value);
                 horiz_itr = horiz_itr->right;
@@ -117,9 +104,7 @@ void print_matrix(Matrix* mx){
 void delete_matrix(Matrix* mx){
     int i;
     Node* itr, *start;
-    for(i=0; i<mx->num_cols; i++){
-        free(mx->cols[i]);
-    }
+    for(i=0; i<mx->num_cols; i++){ free(mx->cols[i]); }
     for(i=0; i<mx->num_rows; i++){
         itr = mx->rows[i]->right;
         start = mx->rows[i]->right;

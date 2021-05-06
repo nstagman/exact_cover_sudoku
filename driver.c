@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "algx.h"
+#include "sudoku_solve.h"
 
 int main(){
     
@@ -25,6 +26,8 @@ int main(){
     insert_node(matrix, 5, 1, 1);
     insert_node(matrix, 5, 6, 1);
 
+    print_matrix(matrix);
+    printf("\n");
     alg_x_search(matrix, stack);
     print_matrix(matrix);
     printf("Solution: ");
@@ -35,6 +38,8 @@ int main(){
 
     delete_matrix(matrix);
     delete_stack(stack);
+
+    printf("\n%d\n", 7/4);
 
     return 0;
 }

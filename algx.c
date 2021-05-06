@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "algx.h"
 
+
 //return column header of column with least number of 1's in matrix
 Node* select_column(Matrix* matrix){
     if(matrix_is_empty(matrix)) { return matrix->root; }
@@ -82,9 +83,12 @@ bool alg_x_search(Matrix* matrix, lifo* solutions){
         }while((horiz_itr = horiz_itr->right) != vert_itr);
 
         //search this matrix again after covering
-        //if solution not found on this branch, pop row from solutions LIFO
-        if(!alg_x_search(matrix, solutions)) { pop_stack(solutions); }
+        //if solution found on this branch, leave loop and stop searching
+        if(alg_x_search(matrix, solutions)) { break; }
 
+        //solution not found on this iterations branch, need to revert changes to matrix
+        //remove row from solutions, then uncover columns from this iteration
+        pop_stack(solutions);
         horiz_itr = vert_itr->left;
         //iterate left from the last column that was covered, uncover each column
         do{

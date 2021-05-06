@@ -3,9 +3,9 @@
 #include <assert.h>
 #include "dlinks_matrix.h"
 
+
 void init_matrix(Matrix*);
 Node* create_node(Matrix*, int, int, int, int, int);
-
 
 //Returns initialized Matrix struct of size [num_rows x num_cols]
 Matrix* create_matrix(int num_rows, int num_cols){
@@ -59,7 +59,7 @@ void insert_node(Matrix* mx, int row, int col, int value){
     mx->cols[col]->count++;
 
 }
- 
+
 //Remove node at row, col
 //If no node exists at this position, do nothing
 void remove_node(Matrix* mx, int row, int col){

@@ -6,8 +6,8 @@
 
 int main(){
     struct timespec start, end;
-    int size = 16;
-    int solution[size*size];
+    int dimension = 16;
+    int solution[dimension*dimension];
     int puzzle[] =
     {15, 0, 0,13, 0,14,11, 8, 3, 0, 0, 1, 4, 0, 0, 7,
       3, 8, 0, 0,15, 2, 6, 0, 0, 0, 0, 0, 1, 0,14, 0,
@@ -37,15 +37,15 @@ int main(){
     //  0,0,0,0,0,8,0,1,0};
     
     clock_gettime(CLOCK_REALTIME, &start);
-    bool solved = solve_puzzle(puzzle, size, solution);
+    bool solved = solve_puzzle(puzzle, dimension, solution);
     clock_gettime(CLOCK_REALTIME, &end);
     double t = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec)/1000000000.0;
     
     printf("Puzzle:\n");
-    print_puzzle(puzzle, size);
+    print_puzzle(puzzle, dimension);
     if(solved){
         printf("\nSolution Found In: %f Seconds\n", t);
-        print_puzzle(solution, size);
+        print_puzzle(solution, dimension);
     }
     else{
         printf("No Solution Found\n");

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "sudoku_solve.h"
 
+
 //return column index for the one value per cell constraint given row and size of puzzle
 static inline int one_constraint(int row, int size){
     return row/size;
@@ -54,6 +55,8 @@ Matrix* sud2matrix(int* sudoku_list, int size){
     return matrix;
 }
 
+//decodes the rows of constraint matrix stored in solution_stack and
+//populates decoded int array with a representation of the completed puzzle
 void decode_solution(lifo* solution_stack, int size, int* decoded){
     int index, value;
     for(lifo_node* itr=solution_stack->head; itr!=NULL; itr=itr->next){
@@ -84,7 +87,7 @@ void print_puzzle(int* solution, int size){
     printf("    "res"");
     for(int i=0; i<size*size; i++){
         if((i % (int)sqrt(size) == 0 && i != 0)){ printf("|"); }
-        if(i/size % (int)sqrt(size) == 2){ printf(uln""); }
+        if(i/size % (int)sqrt(size) == (int)sqrt(size)-1){ printf(uln""); }
         if(i % size == 0) { printf("\n|"); }
         printf("%3d"res, solution[i]);
     }

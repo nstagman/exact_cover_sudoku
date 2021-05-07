@@ -19,3 +19,9 @@ $(EXE): $(OBJS)
 
 clean:
 	rm $(EXE) $(OBJS) $(DEPS)
+
+
+
+# Run Python
+py:
+	python3 solver.py

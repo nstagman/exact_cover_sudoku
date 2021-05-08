@@ -9,26 +9,26 @@ from linked_matrix import *
 # Unique value per box
 # These functions return the column of the matrix to be populated for a constraint when given
 # a specified row of the matrix and the dimension of the sudoku puzzle
-def one_constraint(row:int, dim:int) -> int:
+def _one_constraint(row:int, dim:int) -> int:
     return row//dim
-def row_constraint(row:int, dim:int) -> int:
+def _row_constraint(row:int, dim:int) -> int:
     return dim**2 + dim*(row//(dim**2)) + row % dim
-def col_constraint(row:int, dim:int) -> int:
+def _col_constraint(row:int, dim:int) -> int:
     return 2*(dim**2) + (row % (dim**2))
-def box_constraint(row:int, dim:int) -> int:
+def _box_constraint(row:int, dim:int) -> int:
     return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
 
-constraints = []
-constraints.append(one_constraint)
-constraints.append(row_constraint)
-constraints.append(col_constraint)
-constraints.append(box_constraint)
+_constraints = []
+_constraints.append(_one_constraint)
+_constraints.append(_row_constraint)
+_constraints.append(_col_constraint)
+_constraints.append(_box_constraint)
 
 # convert list of ints representing the puzzle to a dancing link matrix
-def list_2_matrix(puzzle: List[int]) -> DL_Matrix:
+def _list_2_matrix(puzzle: List[int]) -> DL_Matrix:
     dim = int(sqrt(len(puzzle)))
     num_rows = dim**3
-    num_cols = (dim**2)*len(constraints)
+    num_cols = (dim**2)*len(_constraints)
     matrix: DL_Matrix = DL_Matrix(num_rows, num_cols)
     #iterate through puzzle
     for i, cell in enumerate(puzzle):
@@ -36,18 +36,18 @@ def list_2_matrix(puzzle: List[int]) -> DL_Matrix:
             # populate all rows representing cadidate values for this cell
             for j in range(dim):
                 row = i*dim+j
-                for constraint in constraints:
+                for constraint in _constraints:
                     matrix.insert_node(row, constraint(row, dim))
         else: # if cell is assigned
             # populate the row representing the assigned value for this cell
             row = i*dim+cell-1
-            for constraint in constraints:
+            for constraint in _constraints:
                     matrix.insert_node(row, constraint(row, dim))
     return matrix
 
 # decodes the solution list returned by algorithm x
 # returns a list of int representing solution to the puzzle
-def decode_solution(solution_list: List[Node]) -> List[int]:
+def _decode_solution(solution_list: List[Node]) -> List[int]:
     dim = int(sqrt(len(puzzle)))
     solved_puzzle = [0] * (dim**2)
     for node in solution_list:
@@ -59,10 +59,9 @@ def decode_solution(solution_list: List[Node]) -> List[int]:
 def solve_puzzle(puzzle: List[int]) -> List[int]:
     dim = sqrt(len(puzzle))
     assert(int(dim+0.5)**2 == len(puzzle)) # only perfect square puzzles are supported
-    puzzle_matrix = list_2_matrix(puzzle)
-    solution_list = puzzle_matrix.alg_x_search()
-    if solution_list: return decode_solution(solution_list)
-    else: return puzzle
+    solution_list = _list_2_matrix(puzzle).alg_x_search()
+    if solution_list: return _decode_solution(solution_list)
+    else: return []
 
 # prints a list of ints as a sudoku puzzle
 def print_puzzle(puzzle: List[int]) -> None:
@@ -116,5 +115,7 @@ if __name__ == '__main__':
     total_time = time.process_time() - start
     
     print_puzzle(puzzle)
-    print(f"\nSolution Found In: {total_time} seconds")
-    print_puzzle(solution)
+    if solution: 
+        print(f"\nSolution Found In: {total_time} seconds")
+        print_puzzle(solution)
+    else: print("\nNo Solution Found")

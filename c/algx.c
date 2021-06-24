@@ -3,32 +3,32 @@
 #include "algx.h"
 
 
-//return column header of column with least number of 1's in matrix
-Node* select_column(Matrix* matrix){
+//return column header of column with least number of Nodes in matrix
+Node* select_min_column(Matrix* matrix){
     if(matrix_is_empty(matrix)) { return matrix->root; }
     Node* itr = matrix->root->right;
     Node* min_node = itr;
-    int min_count = itr->count;
+    int min_count  = itr->count;
     while(itr->right != matrix->root){
         itr = itr->right;
         if(itr->count < min_count){
-            min_node = itr;
+            min_node  = itr;
             min_count = itr->count;
         }
     }
     return min_node;
 }
 
-//cover a column of node n in manner described for dancing links algorithm
+//cover a column of node n for dancing links algorithm
 void cover(Node* n){
     Node* col = column_of(n);
     //unlink left and right neighbors of col from col
     col->right->left = col->left;
     col->left->right = col->right;
-    //iterate through each 1 in col col top to bottom
+    //iterate through each Node in col top to bottom
     for(Node* vert_itr=col->down; vert_itr!=col; vert_itr=vert_itr->down){
         //iterate through row left to right
-        //for each 1 in this row, unlink top and bottom neighbors and reduce count of that column
+        //for each Node in this row, unlink top and bottom neighbors and reduce count of that column
         for(Node* horiz_itr=vert_itr->right; horiz_itr!=vert_itr; horiz_itr=horiz_itr->right){
             horiz_itr->up->down = horiz_itr->down;
             horiz_itr->down->up = horiz_itr->up;
@@ -37,13 +37,13 @@ void cover(Node* n){
     }
 }
 
-//uncover a column of node n in manner described for dancing links algorithm
+//uncover a column of node n for dancing links algorithm
 void uncover(Node* n){
     Node* col=column_of(n);
     //iterate through each 1 in col bottom to top
     for(Node* vert_itr=col->up; vert_itr!=col; vert_itr=vert_itr->up){
         //iterate through row right to left
-        //for each 1 in this row, relink top and bottom neighbors and increment count of that column
+        //for each Node in this row, relink top and bottom neighbors and increment count of that column
         for(Node* horiz_itr=vert_itr->left; horiz_itr!=vert_itr; horiz_itr=horiz_itr->left){
             horiz_itr->up->down = horiz_itr;
             horiz_itr->down->up = horiz_itr;
@@ -60,13 +60,10 @@ void uncover(Node* n){
 //solutions LIFO will contain all rows making up the solution
 bool alg_x_search(Matrix* matrix, lifo* solutions){
     //if matrix is empty then an exact cover exists, return true
-    if(matrix_is_empty(matrix)) {
-        matrix->solved = true;
-        return true;
-    }
-    //select the column with least number of 1's
-    Node* selected_col = select_column(matrix);
-    //if selected column has 0 ones, then this branch has failed
+    if(matrix_is_empty(matrix)) { return matrix->solved = true; }
+    //select the column with least number of Nodes
+    Node* selected_col = select_min_column(matrix);
+    //if selected column has 0 Nodes, then this branch has failed
     if(selected_col->count < 1) { return false; }
 
     Node* vert_itr=selected_col->down;
@@ -79,7 +76,7 @@ bool alg_x_search(Matrix* matrix, lifo* solutions){
         horiz_itr = vert_itr;
         //iterate right from vertical iterator, cover each column
         do{
-            if(horiz_itr->col >= 0){ cover(horiz_itr); } //skip column of row headers
+            if(horiz_itr->col >= 0) { cover(horiz_itr); } //skip column of row headers
         }while((horiz_itr = horiz_itr->right) != vert_itr);
 
         //search this matrix again after covering
@@ -92,7 +89,7 @@ bool alg_x_search(Matrix* matrix, lifo* solutions){
         horiz_itr = vert_itr->left;
         //iterate left from the last column that was covered, uncover each column
         do{
-            if(horiz_itr->col >= 0){ uncover(horiz_itr); } //skip column of row headers
+            if(horiz_itr->col >= 0) { uncover(horiz_itr); } //skip column of row headers
         }while((horiz_itr = horiz_itr->left) != vert_itr->left);
 
         vert_itr = vert_itr->down;

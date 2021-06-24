@@ -4,7 +4,7 @@
 
 lifo* create_stack(){
     lifo* stack = malloc(sizeof(lifo));
-    stack->head = NULL;
+    stack->head  = NULL;
     stack->count = 0;
     return stack;
 }
@@ -31,7 +31,7 @@ lifo_node* peek_stack(lifo* stack){
 
 void delete_stack(lifo* stack){
     if(stack->head != NULL){
-        lifo_node* itr = stack->head;
+        lifo_node* itr  = stack->head;
         lifo_node* prev = itr;
         while(itr->next != NULL){
             itr = itr->next;

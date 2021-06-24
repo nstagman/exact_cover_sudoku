@@ -7,28 +7,23 @@ from linked_matrix import *
 # Unique value per row
 # Unique value per col
 # Unique value per box
+class Constraints:
 # These functions return the column of the matrix to be populated for a constraint when given
 # a specified row of the matrix and the dimension of the sudoku puzzle
-def _one_constraint(row:int, dim:int) -> int:
-    return row//dim
-def _row_constraint(row:int, dim:int) -> int:
-    return dim**2 + dim*(row//(dim**2)) + row % dim
-def _col_constraint(row:int, dim:int) -> int:
-    return 2*(dim**2) + (row % (dim**2))
-def _box_constraint(row:int, dim:int) -> int:
-    return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
-
-_constraints = []
-_constraints.append(_one_constraint)
-_constraints.append(_row_constraint)
-_constraints.append(_col_constraint)
-_constraints.append(_box_constraint)
+    def _one_constraint(row:int, dim:int) -> int:
+        return row//dim
+    def _row_constraint(row:int, dim:int) -> int:
+        return dim**2 + dim*(row//(dim**2)) + row % dim
+    def _col_constraint(row:int, dim:int) -> int:
+        return 2*(dim**2) + (row % (dim**2))
+    def _box_constraint(row:int, dim:int) -> int:
+        return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
+    list = [_one_constraint, _row_constraint, _col_constraint, _box_constraint]
 
 # convert list of ints representing the puzzle to a dancing link matrix
-def _list_2_matrix(puzzle: List[int]) -> DL_Matrix:
-    dim = int(sqrt(len(puzzle)))
+def _list_2_matrix(puzzle: List[int], dim: int) -> DL_Matrix:
     num_rows = dim**3
-    num_cols = (dim**2)*len(_constraints)
+    num_cols = (dim**2)*len(Constraints.list)
     matrix: DL_Matrix = DL_Matrix(num_rows, num_cols)
     #iterate through puzzle
     for i, cell in enumerate(puzzle):
@@ -36,19 +31,19 @@ def _list_2_matrix(puzzle: List[int]) -> DL_Matrix:
             # populate all rows representing cadidate values for this cell
             for j in range(dim):
                 row = i*dim+j
-                for constraint in _constraints:
+                for constraint in Constraints.list:
                     matrix.insert_node(row, constraint(row, dim))
         else: # if cell is assigned
             # populate the row representing the assigned value for this cell
             row = i*dim+cell-1
-            for constraint in _constraints:
+            for constraint in Constraints.list:
                     matrix.insert_node(row, constraint(row, dim))
     return matrix
 
 # decodes the solution list returned by algorithm x
 # returns a list of int representing solution to the puzzle
-def _decode_solution(solution_list: List[Node]) -> List[int]:
-    dim = int(sqrt(len(puzzle)))
+def _decode_solution(solution_list: List[Node], dim: int) -> List[int]:
+    if not solution_list: return []
     solved_puzzle = [0] * (dim**2)
     for node in solution_list:
         solved_puzzle[node.row // dim] = (node.row % dim) + 1
@@ -57,17 +52,15 @@ def _decode_solution(solution_list: List[Node]) -> List[int]:
 # takes list of ints representing a sudoku puzzle
 # returns a list of ints representing the solution if one is found
 def solve_puzzle(puzzle: List[int]) -> List[int]:
-    dim = sqrt(len(puzzle))
+    dim = int(sqrt(len(puzzle)))
     assert(int(dim+0.5)**2 == len(puzzle)) # only perfect square puzzles are supported
-    solution_list = _list_2_matrix(puzzle).alg_x_search()
-    if solution_list: return _decode_solution(solution_list)
-    else: return []
+    solution_list = _list_2_matrix(puzzle, dim).alg_x_search()
+    return _decode_solution(solution_list, dim)
 
 # prints a list of ints as a sudoku puzzle
 def print_puzzle(puzzle: List[int]) -> None:
-    dim = sqrt(len(puzzle))
+    dim = int(sqrt(len(puzzle)))
     assert(int(dim+0.5)**2 == len(puzzle)) # only perfect square puzzles are supported
-    dim = int(dim)
     for i in range(dim): print(uln + '   ', end='')
     print('     ' + res, end='')
     for i, cell in enumerate(puzzle):

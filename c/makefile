@@ -24,4 +24,4 @@ clean:
 
 # Run Python
 py:
-	python3 solver.py
+	python3 ../python/solver.py

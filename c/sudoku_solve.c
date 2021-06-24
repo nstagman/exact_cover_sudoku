@@ -19,15 +19,16 @@ static inline int col_constraint(int row, int dim){
 }
 //return column index for the unique value per box constraint given row and dimensioin of puzzle
 static inline int box_constraint(int row, int dim){
-    return 3*(dim*dim) + (row/((int)sqrt(dim)*dim*dim))*(dim*(int)sqrt(dim)) + ((row/((int)sqrt(dim)*dim)) % (int)sqrt(dim))*dim + (row%dim);
+    return 3*(dim*dim) + (row/((int)sqrt(dim)*dim*dim))*(dim*(int)sqrt(dim)) +
+           ((row/((int)sqrt(dim)*dim)) % (int)sqrt(dim))*dim + (row%dim);
 }
 
 //convert int array representing puzzle into constraint matrix for algorithm x
 //inputs: int array and dimension of puzzle. (dim==9 for standard 9x9 puzzle)
 Matrix* sud2matrix(int* sudoku_list, int dim){
     assert((int)sqrt(dim)*(int)sqrt(dim) == dim); //only perfect square puzzles are supported
-    int num_rows = dim*dim*dim;
-    int num_cols = dim*dim*4;
+    int num_rows  = dim*dim*dim;
+    int num_cols  = dim*dim*4;
     int num_cells = dim*dim;
     Matrix* matrix = create_matrix(num_rows, num_cols);
 

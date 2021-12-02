@@ -1,38 +1,34 @@
 #include <stdlib.h>
-#include "lifo.h"
+#include "solution_stack.h"
 
 
-lifo* create_stack(){
-    lifo* stack = malloc(sizeof(lifo));
+solution_stack* create_stack(){
+    solution_stack* stack = malloc(sizeof(solution_stack));
     stack->head  = NULL;
     stack->count = 0;
     return stack;
 }
 
-void push_stack(lifo* stack, Node* data){
-    lifo_node* node = malloc(sizeof(lifo_node));
+void push_stack(solution_stack* stack, void* data){
+    solution_node* node = malloc(sizeof(solution_node));
     node->data = data;
     node->next = stack->head;
     stack->head = node;
     stack->count++;
 }
 
-void pop_stack(lifo* stack){
+void pop_stack(solution_stack* stack){
     if(stack->count < 1) { return; }
-    lifo_node* tmp = stack->head;
+    solution_node* tmp = stack->head;
     stack->head = stack->head->next;
     free(tmp);
     stack->count--;
 }
 
-lifo_node* peek_stack(lifo* stack){
-    return stack->head;
-}
-
-void delete_stack(lifo* stack){
+void delete_stack(solution_stack* stack){
     if(stack->head != NULL){
-        lifo_node* itr  = stack->head;
-        lifo_node* prev = itr;
+        solution_node* itr  = stack->head;
+        solution_node* prev = itr;
         while(itr->next != NULL){
             itr = itr->next;
             free(prev);

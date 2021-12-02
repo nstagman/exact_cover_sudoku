@@ -1,5 +1,5 @@
 from math import sqrt
-from linked_matrix import *
+from dlinks_matrix import *
 
 
 # --- Constraints for a sudoku puzzle ---

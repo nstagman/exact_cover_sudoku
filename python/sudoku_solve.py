@@ -18,12 +18,12 @@ class Constraints:
         return 2*(dim**2) + (row % (dim**2))
     def _box_constraint(row:int, dim:int) -> int:
         return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
-    list = [_one_constraint, _row_constraint, _col_constraint, _box_constraint]
+    constraint_list = [_one_constraint, _row_constraint, _col_constraint, _box_constraint]
 
 # convert list of ints representing the puzzle to a dancing link matrix
 def _list_2_matrix(puzzle: List[int], dim: int) -> DL_Matrix:
     num_rows = dim**3
-    num_cols = (dim**2)*len(Constraints.list)
+    num_cols = (dim**2)*len(Constraints.constraint_list)
     matrix: DL_Matrix = DL_Matrix(num_rows, num_cols)
     #iterate through puzzle
     for i, cell in enumerate(puzzle):
@@ -31,23 +31,14 @@ def _list_2_matrix(puzzle: List[int], dim: int) -> DL_Matrix:
             # populate all rows representing cadidate values for this cell
             for j in range(dim):
                 row = i*dim+j
-                for constraint in Constraints.list:
+                for constraint in Constraints.constraint_list:
                     matrix.insert_node(row, constraint(row, dim))
         else: # if cell is assigned
             # populate the row representing the assigned value for this cell
             row = i*dim+cell-1
-            for constraint in Constraints.list:
+            for constraint in Constraints.constraint_list:
                     matrix.insert_node(row, constraint(row, dim))
     return matrix
-
-# decodes the solution list returned by algorithm x
-# returns a list of int representing solution to the puzzle
-def _decode_solution(solution_list: List[Node], dim: int) -> List[int]:
-    if not solution_list: return []
-    solved_puzzle = [0] * (dim**2)
-    for node in solution_list:
-        solved_puzzle[node.row // dim] = (node.row % dim) + 1
-    return solved_puzzle
 
 # takes list of ints representing a sudoku puzzle
 # returns a list of ints representing the solution if one is found
@@ -55,7 +46,11 @@ def solve_puzzle(puzzle: List[int]) -> List[int]:
     dim = int(sqrt(len(puzzle)))
     assert(int(dim+0.5)**2 == len(puzzle)) # only perfect square puzzles are supported
     solution_list = _list_2_matrix(puzzle, dim).alg_x_search()
-    return _decode_solution(solution_list, dim)
+    if not solution_list: return []
+    solved_puzzle = [0] * (dim**2)
+    for node in solution_list:
+        solved_puzzle[node.row // dim] = (node.row % dim) + 1
+    return solved_puzzle
 
 # prints a list of ints as a sudoku puzzle
 def print_puzzle(puzzle: List[int]) -> None:

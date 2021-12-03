@@ -1,4 +1,4 @@
-EXE := ssc
+EXE := ss
 CC := clang++
 CFLAGS := -O3 -Wall -Wextra
 LFLAGS := -lm
@@ -19,9 +19,3 @@ $(EXE): $(OBJS)
 
 clean:
 	rm $(EXE) $(OBJS) $(DEPS)
-
-
-
-# Run Python
-py:
-	python3 ../python/solver.py

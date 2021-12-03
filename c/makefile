@@ -1,6 +1,6 @@
 EXE := ss
 CC := gcc
-CFLAGS := -O0 -Wall -Wextra
+CFLAGS := -O3 -Wall -Wextra
 LFLAGS := -lm
 SRC := .c
 
@@ -19,9 +19,3 @@ $(EXE): $(OBJS)
 
 clean:
 	rm $(EXE) $(OBJS) $(DEPS)
-
-
-
-# Run Python
-py:
-	python3 ../python/solver.py

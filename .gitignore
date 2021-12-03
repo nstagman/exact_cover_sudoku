@@ -3,6 +3,7 @@ sudoku_solver
 ss
 assignment?
 puzzles_bak.txt
+solutions.txt
 *.docx
 *.png
 *.tmp

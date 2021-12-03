@@ -2,9 +2,6 @@ from __future__ import annotations
 from typing import Generator, List
 
 
-uln = '\033[4m'
-res = '\033[0m'
-
 # Toroidally Linked Matrix
 class DL_Matrix:
     def __init__(self, num_rows:int, num_cols:int) -> None:
@@ -142,6 +139,8 @@ class DL_Matrix:
 
     # prints Matrix in tabular form
     def print_matrix(self) -> None:
+        uln = '\033[4m'
+        res = '\033[0m'
         print('n: ', end='')
         # print counts for each column
         for col in self.root.itr_right():

@@ -1,5 +1,5 @@
 from math import sqrt
-from dlinks_matrix import *
+import dlinks_matrix as dlm
 
 
 # --- Constraints for a sudoku puzzle ---
@@ -7,42 +7,42 @@ from dlinks_matrix import *
 # Unique value per row
 # Unique value per col
 # Unique value per box
-class Constraints:
-    # These functions return the column of the matrix to be populated for a constraint when given
-    # a specified row of the matrix and the dimension of the sudoku puzzle
-    def _one_constraint(row:int, dim:int) -> int:
-        return row//dim
-    def _row_constraint(row:int, dim:int) -> int:
-        return dim**2 + dim*(row//(dim**2)) + row % dim
-    def _col_constraint(row:int, dim:int) -> int:
-        return 2*(dim**2) + (row % (dim**2))
-    def _box_constraint(row:int, dim:int) -> int:
-        return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
-    constraint_list = [_one_constraint, _row_constraint, _col_constraint, _box_constraint]
+# ---------------------------------------
+# These functions return the column of the matrix to be populated for a constraint when given
+# a specified row of the matrix and the dimension of the sudoku puzzle
+def _one_constraint(row: int, dim:int) -> int:
+    return row//dim
+def _row_constraint(row:int, dim:int) -> int:
+    return dim**2 + dim*(row//(dim**2)) + row % dim
+def _col_constraint(row:int, dim:int) -> int:
+    return 2*(dim**2) + (row % (dim**2))
+def _box_constraint(row:int, dim:int) -> int:
+    return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
+constraint_list = [_one_constraint, _row_constraint, _col_constraint, _box_constraint]
 
 # convert list of ints representing the puzzle to a dancing link matrix
-def _list_2_matrix(puzzle: List[int], dim: int) -> DL_Matrix:
+def _list_2_matrix(puzzle: list[int], dim: int) -> dlm.DL_Matrix:
     num_rows = dim**3
-    num_cols = (dim**2)*len(Constraints.constraint_list)
-    matrix: DL_Matrix = DL_Matrix(num_rows, num_cols)
+    num_cols = (dim**2)*len(constraint_list)
+    matrix: dlm.DL_Matrix = dlm.DL_Matrix(num_rows, num_cols)
     #iterate through puzzle
     for i, cell in enumerate(puzzle):
         if cell == 0: # if cell is unassigned
             # populate all rows representing cadidate values for this cell
             for j in range(dim):
                 row = i*dim+j
-                for constraint in Constraints.constraint_list:
+                for constraint in constraint_list:
                     matrix.insert_node(row, constraint(row, dim))
         else: # if cell is assigned
             # populate the row representing the assigned value for this cell
             row = i*dim+cell-1
-            for constraint in Constraints.constraint_list:
+            for constraint in constraint_list:
                     matrix.insert_node(row, constraint(row, dim))
     return matrix
 
 # takes list of ints representing a sudoku puzzle
 # returns a list of ints representing the solution if one is found
-def solve_puzzle(puzzle: List[int]) -> List[int]:
+def solve_puzzle(puzzle: list[int]) -> list[int]:
     dim = int(sqrt(len(puzzle)))
     assert(int(dim+0.5)**2 == len(puzzle)) # only perfect square puzzles are supported
     solution_list = _list_2_matrix(puzzle, dim).alg_x_search()
@@ -53,7 +53,7 @@ def solve_puzzle(puzzle: List[int]) -> List[int]:
     return solved_puzzle
 
 # prints a list of ints as a sudoku puzzle
-def print_puzzle(puzzle: List[int]) -> None:
+def print_puzzle(puzzle: list[int]) -> None:
     uln = '\033[4m'
     res = '\033[0m'
     dim = int(sqrt(len(puzzle)))
@@ -70,7 +70,6 @@ def print_puzzle(puzzle: List[int]) -> None:
 
 
 if __name__ == '__main__':
-    import time
 
     def main():
         puzzle = \
@@ -91,13 +90,11 @@ if __name__ == '__main__':
         2,15, 0, 0, 6, 9, 7, 0, 0, 0, 0, 0,10, 0,13, 0,
         9, 0, 0,14, 0,12, 8, 3, 1, 0, 0, 2, 5, 0, 0,16]
         
-        start = time.process_time()
         solution = solve_puzzle(puzzle)
-        total_time = time.process_time() - start
         
         print_puzzle(puzzle)
         if solution: 
-            print(f"\nSolution Found In: {total_time} seconds")
+            print(f"\nSolution Found:")
             print_puzzle(solution)
         else: print("\nNo Solution Found")
         

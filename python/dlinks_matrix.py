@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import Generator, List
+from typing import Generator, Union
 
 
 # Toroidally Linked Matrix
 class DL_Matrix:
-    def __init__(self, num_rows:int, num_cols:int) -> None:
+    def __init__(self, num_rows: int, num_cols: int) -> None:
         self.root: Node       = Node(self, -1, -1)
         self.rows: list[Node] = [Node(self, row=i, col=-1) for i in range(num_rows)]
         self.cols: list[Node] = [Node(self, row=-1, col=i, count=0) for i in range(num_cols)]
@@ -70,7 +70,7 @@ class DL_Matrix:
         col.left.right = col
     
     # search matrix for exact cover, return list of rows as solution if one exists
-    def alg_x_search(self) -> List[Node]:
+    def alg_x_search(self) -> list[Node]:
         solutions = [] # list of solutions
         
         # recursive search algorithm returns true if solution is found
@@ -108,12 +108,13 @@ class DL_Matrix:
 
     # inserts Node into Matrix at row, col
     # if node already exists at row, col - do nothing
-    def insert_node(self, row:int, col:int) -> None:
+    def insert_node(self, row: int, col: int) -> None:
         assert(row >=0 and col >= 0 and row < len(self.rows) and col < len(self.cols))
         # create node to insert
         new_node: Node = Node(self, row, col)
         
         # iterate through the row to find correct placement of new_node in row
+        n = self.root
         for n in self.rows[row].itr_right(excl=False):
             if n.right.col == -1 or n.right.col > col: break
         if n.col == col: return # if node already exists, leave
@@ -165,20 +166,21 @@ class DL_Matrix:
 
 # Node to be stored in toroidal linked matrix
 class Node:
-    def __init__(self, matrix:DL_Matrix, row:int, col:int, count:int=-1,
-                 up:Node=None, down:Node=None, left:Node=None, right:Node=None) -> None:
-        self.row   : int       = row
-        self.col   : int       = col
-        self.count : int       = count
-        self.matrix: DL_Matrix = matrix
-        self.up    : Node      = up
-        self.down  : Node      = down
-        self.left  : Node      = left
-        self.right : Node      = right
+    def __init__(self, matrix: DL_Matrix, row: int, col: int, count: int=1,
+                 up: Union[Node,None]=None, down: Union[Node,None]=None,
+                 left: Union[Node,None]=None, right: Union[Node,None]=None) -> None:
+        self.row    = row
+        self.col    = col
+        self.count  = count
+        self.matrix = matrix
+        self.up     = up or self
+        self.down   = down or self
+        self.left   = left or self
+        self.right  = right or self
     
     # iterate full circe from node moving up
     # if excl is True, this node will not be yielded
-    def itr_up(self, excl=True) -> Generator[Node]:
+    def itr_up(self, excl: bool=True) -> Generator[Node,None,None]:
         itr = self
         if not excl: yield itr
         while itr.up != self:
@@ -187,7 +189,7 @@ class Node:
 
     # iterate full circle from node moving down
     # if excl is True, this node will not be yielded
-    def itr_down(self, excl=True) -> Generator[Node]:
+    def itr_down(self, excl: bool=True) -> Generator[Node,None,None]:
         itr = self
         if not excl: yield itr
         while itr.down != self:
@@ -196,7 +198,7 @@ class Node:
 
     # iterate full circle from node moving left
     # if excl is True, this node will not be yielded
-    def itr_left(self, excl=True) -> Generator[Node]:
+    def itr_left(self, excl: bool=True) -> Generator[Node,None,None]:
         itr = self
         if not excl: yield itr
         while itr.left != self:
@@ -205,7 +207,7 @@ class Node:
 
     # iterate full circle from node moving right
     # if excl is True, this node will not be yielded
-    def itr_right(self, excl=True) -> Generator[Node]:
+    def itr_right(self, excl: bool=True) -> Generator[Node,None,None]:
         itr = self
         if not excl: yield itr
         while itr.right != self:

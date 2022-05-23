@@ -72,30 +72,12 @@ def print_puzzle(puzzle: list[int]) -> None:
 if __name__ == '__main__':
 
     def main():
-        puzzle = \
-        [15, 0, 0,13, 0,14,11, 8, 3, 0, 0, 1, 4, 0, 0, 7,
-        3, 8, 0, 0,15, 2, 6, 0, 0, 0, 0, 0, 1, 0,14, 0,
-        6, 0, 1, 0,10, 7, 0,12,15, 0, 5, 0, 2, 0,11, 3,
-        11, 0, 0, 0, 0, 3, 0, 0, 4, 0,13,14, 0, 0, 0, 6,
-        8, 3,10,15, 0,16,13, 0, 7, 0, 0, 6,14, 5, 0,12,
-        0, 0, 0, 1, 0, 0,14, 0,13, 0, 0,15, 6, 7, 0, 0,
-        7, 2,12, 6, 8, 4, 0,10, 5, 9, 0,16, 0,11, 1,15,
-        0,13,14, 0, 7, 6, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
-        0, 5,11, 0,14,13, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0,
-        1, 7, 2,10,12, 8, 0, 4, 6, 3, 0, 5, 0,14, 9,13,
-        0, 0, 0, 3, 0, 0,10, 0, 9, 0, 0, 4,12,16, 0, 0,
-        14, 4, 9, 8, 0,15, 2, 0,12, 0, 0,11, 7, 6, 0,10,
-        12, 0, 0, 0, 0,10, 0, 0,16, 0, 9,13, 0, 0, 0, 2,
-        10, 0,13, 0, 4, 1, 0, 2,14, 0, 6, 0, 9, 0, 8,11,
-        2,15, 0, 0, 6, 9, 7, 0, 0, 0, 0, 0,10, 0,13, 0,
-        9, 0, 0,14, 0,12, 8, 3, 1, 0, 0, 2, 5, 0, 0,16]
-        
-        solution = solve_puzzle(puzzle)
-        
-        print_puzzle(puzzle)
-        if solution: 
-            print(f"\nSolution Found:")
-            print_puzzle(solution)
-        else: print("\nNo Solution Found")
+        with open('puzzles.txt', 'r+') as puzzle_file:
+            with open('solutions.txt', 'w') as solution_file:
+                while line:= puzzle_file.readline().rstrip('\n'):
+                    solution = ''.join(str(s) for s in solve_puzzle([int(x) for x in line]))
+                    solution_file.write(line + ',' + solution + '\n')
+                    # print(line, end=',')
+                    # print(solution)
         
     main()

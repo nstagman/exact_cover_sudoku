@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
             pstr[i] = solution[i] + '0';
         }
         std::fputs(buf, solutions_file);
-        std::fputs(" ", solutions_file);
+        std::fputs(",", solutions_file);
         std::fputs(pstr, solutions_file);
         std::fputs("\n", solutions_file);
     }

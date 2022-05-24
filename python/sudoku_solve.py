@@ -72,12 +72,11 @@ def print_puzzle(puzzle: list[int]) -> None:
 if __name__ == '__main__':
 
     def main():
-        with open('puzzles.txt', 'r+') as puzzle_file:
-            with open('solutions.txt', 'w') as solution_file:
-                while line:= puzzle_file.readline().rstrip('\n'):
-                    solution = ''.join(str(s) for s in solve_puzzle([int(x) for x in line]))
-                    solution_file.write(line + ',' + solution + '\n')
-                    # print(line, end=',')
-                    # print(solution)
+        with open('puzzles.txt', 'rb') as puzzle_file, open('solutions.txt', 'wb') as solution_file:
+            while puzzle_str := puzzle_file.read(82).rstrip(b'\n'):
+                puzzle = [c - 0x30 for c in puzzle_str]
+                solution = solve_puzzle(puzzle)
+                solution_str = bytes([i + 0x30 for i in solution]) + b'\n'
+                solution_file.write(puzzle_str + b',' + solution_str)
         
     main()

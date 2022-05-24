@@ -98,9 +98,8 @@ class DL_Matrix:
                 # solution not found on this branch, need to uncover columns from this iteration
                 solutions.pop() # remove current row from solutions
                 # iterate left from the last covered column and uncover
-                for horiz_itr in vert_itr.itr_left():
+                for horiz_itr in vert_itr.left.itr_left(excl=False):
                     if horiz_itr.col >= 0: DL_Matrix.uncover(horiz_itr)
-                DL_Matrix.uncover(vert_itr )
             return self.solved
 
         search()

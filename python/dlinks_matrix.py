@@ -45,32 +45,32 @@ class DL_Matrix:
         col.right.left = col.left
         col.left.right = col.right
         # iterate through each node in column top to bottom
-        for vert_itr in col.itr_down():
+        for col_itr in col.itr_down():
             # iterate though each node in row of next_down left to right
-            for horiz_itr in vert_itr.itr_right():
+            for row_itr in col_itr.itr_right():
                 # unlink top and bottom neighbors of each node reduce count in col header
-                horiz_itr.up.down = horiz_itr.down
-                horiz_itr.down.up = horiz_itr.up
-                horiz_itr.get_col().count -= 1
+                row_itr.up.down = row_itr.down
+                row_itr.down.up = row_itr.up
+                row_itr.get_col().count -= 1
 
     # uncover a column of a node for dancing links algorithm x
     @staticmethod
     def uncover(node: Node) -> None:
         col = node.get_col()
         # iterate through each node in column bottom to top
-        for vert_itr in col.itr_up():
+        for col_itr in col.itr_up():
             # iterate through each node in row of next_up right to left
-            for horiz_itr in vert_itr.itr_left():
+            for row_itr in col_itr.itr_left():
                 # relink top and bottom neighbors of each node and increment count in col header
-                horiz_itr.up.down = horiz_itr
-                horiz_itr.down.up = horiz_itr
-                horiz_itr.get_col().count += 1
+                row_itr.up.down = row_itr
+                row_itr.down.up = row_itr
+                row_itr.get_col().count += 1
         # relink left and right neighbors of column header
         col.right.left = col
         col.left.right = col
     
     # search matrix for exact cover, return list of rows as solution if one exists
-    def alg_x_search(self) -> list[Node]:
+    def alg_x_search(self) -> list[int]:
         solutions = [] # list of solutions
         
         # recursive search algorithm returns true if solution is found
@@ -84,12 +84,12 @@ class DL_Matrix:
             # if selected col has zero nodes, then this branch has failed
             if selected_col.count < 1 : return False
 
-            # iterate down from col head
-            for vert_itr in selected_col.itr_down():
-                solutions.append(self.rows[vert_itr.row]) # add current row to solutions
-                # iterate right from current node in column and cover each
-                for horiz_itr in vert_itr.itr_right(excl=False):
-                    if horiz_itr.col >= 0: DL_Matrix.cover(horiz_itr)
+            # iterate down from selected column
+            for col_itr in selected_col.itr_down():
+                solutions.append(col_itr.row) # add current row to solutions
+                # iterate right through the current solution row
+                for sol_node in col_itr.itr_right(excl=False):
+                    if sol_node.col >= 0: DL_Matrix.cover(sol_node)
 
                 # search again after covering
                 # if solution is found on this branch, leave loop and stop searching
@@ -97,9 +97,9 @@ class DL_Matrix:
 
                 # solution not found on this branch, need to uncover columns from this iteration
                 solutions.pop() # remove current row from solutions
-                # iterate left from the last covered column and uncover
-                for horiz_itr in vert_itr.left.itr_left(excl=False):
-                    if horiz_itr.col >= 0: DL_Matrix.uncover(horiz_itr)
+                # iterate left through the current solution row
+                for sol_node in col_itr.left.itr_left(excl=False):
+                    if sol_node.col >= 0: DL_Matrix.uncover(sol_node)
             return self.solved
 
         search()

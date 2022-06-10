@@ -48,8 +48,8 @@ def solve_puzzle(puzzle: list[int]) -> list[int]:
     solution_list = _list_2_matrix(puzzle, dim).alg_x_search()
     if not solution_list: return []
     solved_puzzle = [0] * (dim**2)
-    for node in solution_list:
-        solved_puzzle[node.row // dim] = (node.row % dim) + 1
+    for row in solution_list:
+        solved_puzzle[row // dim] = (row % dim) + 1
     return solved_puzzle
 
 # prints a list of ints as a sudoku puzzle

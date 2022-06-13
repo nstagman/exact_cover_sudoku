@@ -14,7 +14,7 @@ The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definit
 
 In the following example, *__X__* = {0,1,2,3,4,5,6} and *__S__* = {A,B,C,D,E,F} where **A**={0,3,6} **B**={0,3} **C**={3,4,6} **D**={2,4,5} **E**={1,2,5,6} **F**={1,6}. The 7 columns in the matrix represent the 7 elements of *__X__* and the 6 rows of the matrix represent the 6 subsets of *__S__*.  The first row, **A**, has a one in columns 0, 3, and 6, while the second row, **B**, has a one in columns 0 and 3, etc..
 
--2 Pics, UI Unsolved and Solved-
+![matrix_unsolved](https://user-images.githubusercontent.com/35941942/173413772-53a1cfff-cc8f-4b01-bcce-a57f44f3e9fa.png) ![matri_solvedx](https://user-images.githubusercontent.com/35941942/173413784-208000c9-8d9b-4f92-8a0a-f56f23e8748c.png)
 
 An exact cover is a set of rows that contain a one in each column exactly one time. The only exact cover for this problem is the subset {**B**,**D**,**F**}, that is, the rows **B**, **D**, and **F** have a one in each column exactly one time.
 
@@ -35,7 +35,10 @@ def _row_constraint(row:int, dim:int) -> int:
 def _col_constraint(row:int, dim:int) -> int:
     return 2*(dim**2) + (row % (dim**2))
 def _box_constraint(row:int, dim:int) -> int:
-    return int(3*(dim**2) + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim)) + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim + (row % dim))
+    return (int(3*(dim**2)
+            + (row//(sqrt(dim)*dim**2))*(dim*sqrt(dim))
+            + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim
+            + (row % dim)))
 ```
 
 ### Finding an Exact Cover
@@ -53,14 +56,10 @@ The following are my cover and uncover functions in Python. Covering starts by r
 ```python
 def cover(node: Node) -> None:
     col = node.get_col()
-    # unlink left and right neighbors of column header
     col.right.left = col.left
     col.left.right = col.right
-    # iterate through each node in column top to bottom
     for col_itr in col.itr_down():
-        # iterate though each node in the row left to right
         for row_itr in col_itr.itr_right():
-            # unlink top and bottom neighbors of each node
             row_itr.up.down = row_itr.down
             row_itr.down.up = row_itr.up
             row_itr.get_col().count -= 1
@@ -72,15 +71,11 @@ def cover(node: Node) -> None:
 ```python
 def uncover(node: Node) -> None:
     col = node.get_col()
-    # iterate through each node in column bottom to top
     for col_itr in col.itr_up():
-        # iterate through each node in the row right to left
         for row_itr in col_itr.itr_left():
-            # relink top and bottom neighbors of each node
             row_itr.up.down = row_itr
             row_itr.down.up = row_itr
             row_itr.get_col().count += 1
-    # relink left and right neighbors of column header
     col.right.left = col
     col.left.right = col
 ```

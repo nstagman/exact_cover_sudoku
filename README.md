@@ -9,7 +9,7 @@ Alternatively, the C and Python implementations can be used without the Sudoku t
 
 I have also created an [animated interactive app](https://nstagman.github.io/algx_visualizer/) to visualize the constraint matrix and Algorithm X as it searches for a solution.
 
-### Exact Cover Problem
+## Exact Cover Problem
 The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definition) from wikipedia: Given a set *__X__*, and a collection of subsets *__S__*, an exact cover of *__X__* is a subcollection, *__S&ast;__*, that contains each element of *__X__* exactly one time.
 
 In the following example, *__X__* = {0,1,2,3,4,5,6} and *__S__* = {A,B,C,D,E,F} where **A**={0,3,6} **B**={0,3} **C**={3,4,6} **D**={2,4,5} **E**={1,2,5,6} **F**={1,6}. The 7 columns in the matrix represent the 7 elements of *__X__* and the 6 rows of the matrix represent the 6 subsets of *__S__*.  The first row, **A**, has a one in columns 0, 3, and 6, while the second row, **B**, has a one in columns 0 and 3, etc..
@@ -18,11 +18,11 @@ In the following example, *__X__* = {0,1,2,3,4,5,6} and *__S__* = {A,B,C,D,E,F} 
 
 An exact cover is a set of rows that contain a one in each column exactly one time. The only exact cover for this problem is the subset {**B**,**D**,**F**}, that is, the rows **B**, **D**, and **F** have a one in each column exactly one time.
 
-### Sudoku as an Exact Cover
+## Sudoku as an Exact Cover
 
 A Sudoku puzzle can be represented as an exact cover problem by turning the rules of the puzzle into constraints for the binary matrix. Each constraint becomes one column of the matrix. A standard 9x9 Sudoku puzzle has four rules.  The first is that each cell in the puzzle must have a number.  This seems obvious, but this requirement needs to be added to the constraint matrix to find a solution.  The final three rules are that each row, column, and house must contain the numbers 1-9.  These numbers cannot be repeated, therefore each number must be unique in its row, column, and house.
 
--'Blank' 4x4 Sudoku Constraint Matrix-
+![fxf_l](https://user-images.githubusercontent.com/35941942/173417887-9bfe7a4f-548d-4872-8749-75a846b26e27.png)
 
 This image shows the constraint matrix for a 4x4 Sudoku.  Each row represents a possible candidate for the puzzle - there are 64 rows (**16 cells * 4 candidates per cell**).  Each column represents a constraint for the puzzle - there are 64 columns (**16 columns** for each of the **4 constraints**). The first 16 columns represent the value assigned constraint. Column 1 represents a value being assigned in cell 1, column 2 represents a value being assigned to cell 2, etc..  The next three constraints (columns 17-32, 33-48, 49-64), represent the row, column, and house constraints.  The first column of each set represents a 1 being assigned the to the first row, column, or house while the last column of each set represents a 4 being assigned to the fourth row, column, or house respectively.
 
@@ -41,10 +41,10 @@ def _box_constraint(row:int, dim:int) -> int:
             + (row % dim)))
 ```
 
-### Finding an Exact Cover
+## Finding an Exact Cover
 Donald Knuths [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) methodology represents this problem with a linked binary matrix.  Each node in this matrix begins doubly linked to all 4 neighboring nodes (up, down, left, and right). A technique called **covering** is used, which is reassigning the links of a node to temporarily *remove* it from the matrix.  When backtracking is required, **uncovering** is used to *add* the node back in to the matrix.
 
-The following are my cover and uncover functions in Python. Covering starts by reassigning the links of the column header horizontal neighbors so they no longer reference the covered column. We then iterate down from the column header and right through each row unlinking the vertical neighbors of each node.  The column can longer be accessed by iterating horizontally, and the nodes can no longer be accessed by iterating vertically.  This *hides* these nodes in the matrix but still allows them to be accessible when needed.  When we need to uncover these nodes, we perform the covering steps in reverse: Iterate up from column header &rarr; Iterate left through each row &rarr; Relink the covered nodes to their neighbors.
+The following are my cover and uncover functions in Python. Covering starts by *unlinking* the column header from its horizontal neighbors so they can no longer reference the covered column. We then iterate **down** from the column header and **right** through each row unlinking the vertical neighbors of each node.  The column can longer be accessed by iterating horizontally, and the nodes can no longer be accessed by iterating vertically.  This *hides* these nodes in the matrix but still allows them to be accessible when needed.  When we need to uncover these nodes, we perform the covering steps in reverse: Iterate **up** from column header &rarr; Iterate **left** through each row &rarr; Relink the covered nodes to their neighbors.
 <table>
 <tr>
 <th>Cover</th>
@@ -95,14 +95,14 @@ def uncover(node: Node) -> None:
 
 - **Cover partial solution:** Each node in the partial solution is covered.
 
- - **Repeat** this algorithm on the newly covered matrix
+- **Repeat** this algorithm on the newly covered matrix
 
 Returning to the first example from above, we can step through the algorithm and view the state of the matrix along the way.  Column 0 is selected since it has the fewest number of nodes (2). Row 0 is then selected as a partial solution since its the first node in the column. Row 0 has nodes in columns 0, 3, and 6. All 3 of these columns need to be covered. The following image shows the matrix after covering the Row 0 partial solution.  
 
--Pic of covered row 0-
+![begin](https://user-images.githubusercontent.com/35941942/173421321-9217dfc0-9a77-4240-b01b-826847a802f1.png) ![r0](https://user-images.githubusercontent.com/35941942/173421358-7b2647ac-2e61-42f2-9f24-e2e087186086.png) ![uncover](https://user-images.githubusercontent.com/35941942/173421374-4e4463f5-46c3-4f01-a71a-14189dafa0b6.png)
 
 When searching on the next iteration, we will select column 1 since it has the least number of nodes. Column 1 has 0 nodes, which means Row 0 is not part of the solution and we need to uncover the Row 0 partial solution. After uncovering we are back to the original matrix but have exhausted Row 0 as a partial solution.  Row 1 is then selected since it is the next row in column 0 (the original selected column).  The algorithm covers columns 0 and 3 &rarr; Selects row 3 as a partial solution &rarr; Covers columns 2, 4, and 5 &rarr; Selects row 5 as a partial solution &rarr; Covers columns 1 and 6.  At this point the matrix is empty, meaning the search is complete and rows 1, 3, and 5 are an exact cover of this constraint matrix.
 
--Pics of selecting 1, 3, 5, empty-
+![r1](https://user-images.githubusercontent.com/35941942/173420916-7ee1a496-0512-47b2-9065-3016c7719ffb.png) ![r3](https://user-images.githubusercontent.com/35941942/173420928-3fb23609-fe4b-4f6e-8311-1181bd0efcf5.png) ![r5](https://user-images.githubusercontent.com/35941942/173420939-298a91a8-4311-4662-b398-37e7b85f3545.png) ![solved](https://user-images.githubusercontent.com/35941942/173420952-c7e1f2f4-4eba-4cb8-8166-f8d9d13f5cb6.png)
 
 This algorithm can be seen in more detail using this [animated interactive web app](https://nstagman.github.io/algx_visualizer/).

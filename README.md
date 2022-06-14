@@ -1,7 +1,7 @@
 # Exact Cover Sudoku
 C, C++, and Python implementations of [Algorithm X](https://en.wikipedia.org/wiki/Knuth%27s_Algorithm_X) for solving an exact cover problem.  The C and Python versions are generic and will work with a matrix of any size. The C++ version has been designed to work specifically for 9x9 Sudoku puzzles.
 
-Cloning and running the C and Python versions will solve a sample 16x16 puzzle.  Running the C++ version will solve all 49,151 *17-Sudoku* puzzles listed in *puzzles.txt*, and write the solutions to a separate file.  It accomplishes this in 1.3 seconds on my machine.
+Cloning and running the C and Python versions will solve a sample 16x16 puzzle.  Running the C++ version will solve all 49,151 *17-Sudoku* puzzles listed in *puzzles.txt*, and write the solutions to *solutions.txt*.  It accomplishes this in 1.3 seconds on my machine.
 
 All 3 implementations are capable of translating an int array representing a Sudoku puzzle into a linked matrix to search for an exact cover. An int array is returned holding the solution to the puzzle if one exists.  The C++ implementation only accepts arrays of size 81 (9x9 puzzles). The other implementations can handle arrays representing any perfect square puzzle e.g. 4x4, 9x9, 16x6, 25x25, etc..
 
@@ -24,6 +24,8 @@ An exact cover is a set of rows that contain a one in each column exactly one ti
 
 A Sudoku puzzle can be represented as an exact cover problem by turning the rules of the puzzle into constraints for the binary matrix. Each constraint becomes one column of the matrix. A standard 9x9 Sudoku puzzle has four rules.  The first is that each cell in the puzzle must have a number.  This seems obvious, but this requirement needs to be added to the constraint matrix to find a solution.  The final three rules are that each row, column, and house must contain the numbers 1-9.  These numbers cannot be repeated, therefore each number must be unique in its row, column, and house.
 
+Constraint Matrix of a 4x4 Sudoku Puzzle
+:-:
 ![fxf_l](https://user-images.githubusercontent.com/35941942/173417887-9bfe7a4f-548d-4872-8749-75a846b26e27.png)
 
 This image shows the constraint matrix for a 4x4 Sudoku.  Each row represents a possible candidate for the puzzle - there are 64 rows (**16 cells * 4 candidates per cell**).  Each column represents a constraint for the puzzle - there are 64 columns (**16 columns** for each of the **4 constraints**). The first 16 columns represent the value assigned constraint. Column 1 represents a value being assigned in cell 1, column 2 represents a value being assigned to cell 2, etc..  The next three constraints (columns 17-32, 33-48, 49-64), represent the row, column, and house constraints.  The first column of each set represents a 1 being assigned the to the first row, column, or house while the last column of each set represents a 4 being assigned to the fourth row, column, or house respectively.

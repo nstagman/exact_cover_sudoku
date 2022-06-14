@@ -14,7 +14,9 @@ The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definit
 
 In the following example, *__X__* = {0,1,2,3,4,5,6} and *__S__* = {A,B,C,D,E,F} where **A**={0,3,6} **B**={0,3} **C**={3,4,6} **D**={2,4,5} **E**={1,2,5,6} **F**={1,6}. The 7 columns in the matrix represent the 7 elements of *__X__* and the 6 rows of the matrix represent the 6 subsets of *__S__*.  The first row, **A**, has a one in columns 0, 3, and 6, while the second row, **B**, has a one in columns 0 and 3, etc..
 
-![matrix_unsolved](https://user-images.githubusercontent.com/35941942/173413772-53a1cfff-cc8f-4b01-bcce-a57f44f3e9fa.png) ![matri_solvedx](https://user-images.githubusercontent.com/35941942/173413784-208000c9-8d9b-4f92-8a0a-f56f23e8748c.png)
+*__X__* = {0,1,2,3,4,5,6} | *__S__* = {**B**,**D**,**F**}
+:-:|:-:
+![matrix_unsolved](https://user-images.githubusercontent.com/35941942/173413772-53a1cfff-cc8f-4b01-bcce-a57f44f3e9fa.png) | ![matri_solvedx](https://user-images.githubusercontent.com/35941942/173413784-208000c9-8d9b-4f92-8a0a-f56f23e8748c.png)
 
 An exact cover is a set of rows that contain a one in each column exactly one time. The only exact cover for this problem is the subset {**B**,**D**,**F**}, that is, the rows **B**, **D**, and **F** have a one in each column exactly one time.
 

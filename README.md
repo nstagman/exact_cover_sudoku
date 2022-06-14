@@ -7,7 +7,7 @@ All 3 implementations are capable of translating an int array representing a Sud
 
 Alternatively, the C and Python implementations can be used without the Sudoku translation step to create and populate a linked matrix of any size, then search for an Exact Cover for any problem.
 
-I have also created an [animated interactive app](https://nstagman.github.io/algx_visualizer/) to visualize the constraint matrix and Algorithm X as it searches for a solution.
+I have also created an [animated interactive app](https://nstagman.github.io/algx_visualizer/) to visualize the constraint matrix as it is modified by Algorithm X.
 
 ## Exact Cover Problem
 The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definition) from wikipedia: Given a set *__X__*, and a collection of subsets *__S__*, an exact cover of *__X__* is a subcollection, *__S&ast;__*, that contains each element of *__X__* exactly one time.
@@ -28,7 +28,7 @@ A Sudoku puzzle can be represented as an exact cover problem by turning the rule
 :-:
 ![fxf_l](https://user-images.githubusercontent.com/35941942/173417887-9bfe7a4f-548d-4872-8749-75a846b26e27.png)
 
-This image shows the constraint matrix for a 4x4 Sudoku.  Each row represents a possible candidate for the puzzle - there are 64 rows (**16 cells * 4 candidates per cell**).  Each column represents a constraint for the puzzle - there are 64 columns (**16 columns** for each of the **4 constraints**). The first 16 columns represent the value assigned constraint. Column 1 represents a value being assigned in cell 1, column 2 represents a value being assigned to cell 2, etc..  The next three constraints (columns 17-32, 33-48, 49-64), represent the row, column, and house constraints.  The first column of each set represents a 1 being assigned the to the first row, column, or house while the last column of each set represents a 4 being assigned to the fourth row, column, or house respectively.
+This image shows the constraint matrix for a 4x4 Sudoku. The first row contains the root of the matrix and the column header nodes. Every column has a special header node that tracks the number of nodes in the column and has references to the first and last node in the column. The remaining rows represent a possible candidate for the puzzle - there are 64 rows (**16 cells * 4 candidates per cell**).  Each column represents a constraint for the puzzle - there are 64 columns (**16 columns** for each of the **4 constraints**). The first 16 columns represent the value assigned constraint. Column 1 represents a value being assigned in cell 1, column 2 represents a value being assigned to cell 2, etc..  The next three constraints (columns 17-32, 33-48, 49-64), represent the row, column, and house constraints.  The first column of each set represents a 1 being assigned the to the first row, column, or house while the last column of each set represents a 4 being assigned to the fourth row, column, or house respectively.
 
 I created the following functions to return the column number in the constraint matrix for each constraint when given the row of the matrix and the size of the puzzle; I'm sure there is some still room for simplification here. These functions will work with any perfect square puzzle e.g. 4x4, 9x9, 16x6, 25x25, etc..
 
@@ -58,7 +58,7 @@ def _box_constraint(row:int, dim:int) -> int:
 </table>
 
 ## Finding an Exact Cover
-Donald Knuths [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) methodology represents this problem with a linked binary matrix.  Each node in this matrix begins doubly linked to all 4 neighboring nodes (up, down, left, and right). A technique called **covering** is used, which is reassigning the links of a node to temporarily *remove* it from the matrix.  When backtracking is required, **uncovering** is used to *add* the node back in to the matrix.
+Donald Knuth's [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) methodology represents this problem with a linked binary matrix.  Each node in this matrix begins doubly linked to all 4 neighboring nodes (up, down, left, and right). A technique called **covering** is used, which is reassigning the links of a node to temporarily *remove* it from the matrix.  When backtracking is required, **uncovering** is used to *add* the node back in to the matrix.
 
 The following are my cover and uncover functions in Python. Covering starts by *unlinking* the column header from its horizontal neighbors so they can no longer reference the covered column. We then iterate **down** from the column header and **right** through each row unlinking the vertical neighbors of each node.  The column can longer be accessed by iterating horizontally, and the nodes can no longer be accessed by iterating vertically.  This *hides* these nodes in the matrix but still allows them to be accessible when needed.  When we need to uncover these nodes, we perform the covering steps in reverse: Iterate **up** from column header &rarr; Iterate **left** through each row &rarr; Relink the covered nodes to their neighbors.
 <table>

@@ -14,7 +14,7 @@ The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definit
 
 In the following example, *__X__* = {0,1,2,3,4,5,6} and *__S__* = {A,B,C,D,E,F} where **A**={0,3,6} **B**={0,3} **C**={3,4,6} **D**={2,4,5} **E**={1,2,5,6} **F**={1,6}. The 7 columns in the matrix represent the 7 elements of *__X__* and the 6 rows of the matrix represent the 6 subsets of *__S__*.  The first row, **A**, has a one in columns 0, 3, and 6, while the second row, **B**, has a one in columns 0 and 3, etc..
 
-*__X__* = {0,1,2,3,4,5,6} | *__S&ast;__* = {**B**,**D**,**F**}
+Rows = *__S__*, Cols =  *__X__* | *__S&ast;__* = {**B**,**D**,**F**}
 :-:|:-:
 ![matrix_unsolved](https://user-images.githubusercontent.com/35941942/173413772-53a1cfff-cc8f-4b01-bcce-a57f44f3e9fa.png) | ![matri_solvedx](https://user-images.githubusercontent.com/35941942/173413784-208000c9-8d9b-4f92-8a0a-f56f23e8748c.png)
 
@@ -107,6 +107,8 @@ Unsolved | Select Row 0 | Row 0 Covered
 
 When searching on the next iteration, we will select column 1 since it has the least number of nodes. Column 1 has 0 nodes, which means Row 0 is not part of the solution and we need to uncover the Row 0 partial solution. After uncovering we are back to the original matrix but have exhausted Row 0 as a partial solution.  Row 1 is then selected since it is the next row in column 0 (the original selected column).  The algorithm covers columns 0 and 3 &rarr; Selects row 3 as a partial solution &rarr; Covers columns 2, 4, and 5 &rarr; Selects row 5 as a partial solution &rarr; Covers columns 1 and 6.  At this point the matrix is empty, meaning the search is complete and rows 1, 3, and 5 are an exact cover of this constraint matrix.
 
-![r1](https://user-images.githubusercontent.com/35941942/173422895-8db85e55-cf6c-4bc6-a346-ccb09d2730c1.png) ![r3](https://user-images.githubusercontent.com/35941942/173422904-975c2ab5-5a81-426e-8c24-dd129647df26.png) ![r5](https://user-images.githubusercontent.com/35941942/173422917-676eb4ed-28a5-4817-ab94-f2ab4ebfb101.png) ![solved](https://user-images.githubusercontent.com/35941942/173422926-5b8a43f7-8601-4621-86d2-477310a01ee5.png)
+Select Row 1 | Select Row 3 | Select Row 5 | Solved
+:-:|:-:|:-:|:-:
+![r1](https://user-images.githubusercontent.com/35941942/173422895-8db85e55-cf6c-4bc6-a346-ccb09d2730c1.png) | ![r3](https://user-images.githubusercontent.com/35941942/173422904-975c2ab5-5a81-426e-8c24-dd129647df26.png) | ![r5](https://user-images.githubusercontent.com/35941942/173422917-676eb4ed-28a5-4817-ab94-f2ab4ebfb101.png) | ![solved](https://user-images.githubusercontent.com/35941942/173422926-5b8a43f7-8601-4621-86d2-477310a01ee5.png)
 
 This algorithm can be seen in more detail using this [animated interactive web app](https://nstagman.github.io/algx_visualizer/).

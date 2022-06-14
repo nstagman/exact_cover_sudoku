@@ -32,9 +32,13 @@ This image shows the constraint matrix for a 4x4 Sudoku.  Each row represents a 
 
 I created the following functions to return the column number in the constraint matrix for each constraint when given the row of the matrix and the size of the puzzle; I'm sure there is some still room for simplification here. These functions will work with any perfect square puzzle e.g. 4x4, 9x9, 16x6, 25x25, etc..
 
-|Sudoku Constraint Calculators|
-|:-:|
-|
+<table>
+<tr>
+<th>Sudoku Constraint Calculators</th>
+</tr>
+<tr>
+<td>
+    
 ```python
 def _one_constraint(row: int, dim:int) -> int:
     return row//dim
@@ -48,7 +52,10 @@ def _box_constraint(row:int, dim:int) -> int:
             + ((row//(sqrt(dim)*dim)) % sqrt(dim))*dim
             + (row % dim)))
 ```
-|
+    
+</td>
+</tr>
+</table>
 
 ## Finding an Exact Cover
 Donald Knuths [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) methodology represents this problem with a linked binary matrix.  Each node in this matrix begins doubly linked to all 4 neighboring nodes (up, down, left, and right). A technique called **covering** is used, which is reassigning the links of a node to temporarily *remove* it from the matrix.  When backtracking is required, **uncovering** is used to *add* the node back in to the matrix.

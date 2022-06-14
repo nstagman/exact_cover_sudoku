@@ -7,7 +7,7 @@ All 3 implementations are capable of translating an int array representing a Sud
 
 Alternatively, the C and Python implementations can be used without the Sudoku translation step to create and populate a linked matrix of any size, then search for an Exact Cover for any problem.
 
-I have also created an [animated interactive app](https://nstagman.github.io/algx_visualizer/) to visualize the constraint matrix as it is modified by Algorithm X.
+I have also created an [algorthm x visualizer](https://nstagman.github.io/algx_visualizer/) to view the constraint matrix as it is modified during a search.
 
 ## Exact Cover Problem
 The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definition) from wikipedia: Given a set *__X__*, and a collection of subsets *__S__*, an exact cover of *__X__* is a subcollection, *__S&ast;__*, that contains each element of *__X__* exactly one time.

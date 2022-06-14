@@ -14,7 +14,7 @@ The [formal definition](https://en.wikipedia.org/wiki/Exact_cover#Formal_definit
 
 In the following example, *__X__* = {0,1,2,3,4,5,6} and *__S__* = {A,B,C,D,E,F} where **A**={0,3,6} **B**={0,3} **C**={3,4,6} **D**={2,4,5} **E**={1,2,5,6} **F**={1,6}. The 7 columns in the matrix represent the 7 elements of *__X__* and the 6 rows of the matrix represent the 6 subsets of *__S__*.  The first row, **A**, has a one in columns 0, 3, and 6, while the second row, **B**, has a one in columns 0 and 3, etc..
 
-*__X__* = {0,1,2,3,4,5,6} | *__S__* = {**B**,**D**,**F**}
+*__X__* = {0,1,2,3,4,5,6} | *__S&ast;__* = {**B**,**D**,**F**}
 :-:|:-:
 ![matrix_unsolved](https://user-images.githubusercontent.com/35941942/173413772-53a1cfff-cc8f-4b01-bcce-a57f44f3e9fa.png) | ![matri_solvedx](https://user-images.githubusercontent.com/35941942/173413784-208000c9-8d9b-4f92-8a0a-f56f23e8748c.png)
 
@@ -101,7 +101,9 @@ def uncover(node: Node) -> None:
 
 Returning to the first example from above, we can step through the algorithm and view the state of the matrix along the way.  Column 0 is selected since it has the fewest number of nodes (2). Row 0 is then selected as a partial solution since its the first node in the column. Row 0 has nodes in columns 0, 3, and 6. All 3 of these columns need to be covered. The following image shows the matrix after covering the Row 0 partial solution.  
 
-![begin](https://user-images.githubusercontent.com/35941942/173422509-29c6adaf-f5c1-4b35-841a-2588c4b783d7.png) ![r0](https://user-images.githubusercontent.com/35941942/173422343-ddca42de-f01b-49bc-a5af-39f1098f6062.png) ![uncover](https://user-images.githubusercontent.com/35941942/173422355-e2f7d777-39bb-4f65-bed1-a8d0f076213d.png)
+Unsolved | Select Row 0 | Row 0 Covered
+:-:|:-:|:-:
+![begin](https://user-images.githubusercontent.com/35941942/173422509-29c6adaf-f5c1-4b35-841a-2588c4b783d7.png) | ![r0](https://user-images.githubusercontent.com/35941942/173422343-ddca42de-f01b-49bc-a5af-39f1098f6062.png) | ![uncover](https://user-images.githubusercontent.com/35941942/173422355-e2f7d777-39bb-4f65-bed1-a8d0f076213d.png)
 
 When searching on the next iteration, we will select column 1 since it has the least number of nodes. Column 1 has 0 nodes, which means Row 0 is not part of the solution and we need to uncover the Row 0 partial solution. After uncovering we are back to the original matrix but have exhausted Row 0 as a partial solution.  Row 1 is then selected since it is the next row in column 0 (the original selected column).  The algorithm covers columns 0 and 3 &rarr; Selects row 3 as a partial solution &rarr; Covers columns 2, 4, and 5 &rarr; Selects row 5 as a partial solution &rarr; Covers columns 1 and 6.  At this point the matrix is empty, meaning the search is complete and rows 1, 3, and 5 are an exact cover of this constraint matrix.
 

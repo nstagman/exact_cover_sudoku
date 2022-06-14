@@ -60,7 +60,7 @@ def _box_constraint(row:int, dim:int) -> int:
 ## Finding an Exact Cover
 Donald Knuth's [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) methodology represents this problem with a linked binary matrix.  Each node in this matrix begins doubly linked to all 4 neighboring nodes (up, down, left, and right). A technique called **covering** is used, which is reassigning the links of a node to temporarily *remove* it from the matrix.  When backtracking is required, **uncovering** is used to *add* the node back in to the matrix.
 
-The following are my cover and uncover functions in Python. Covering starts by *unlinking* the column header from its horizontal neighbors so they can no longer reference the covered column. We then iterate **down** from the column header and **right** through each row unlinking the vertical neighbors of each node.  The column can longer be accessed by iterating horizontally, and the nodes can no longer be accessed by iterating vertically.  This *hides* these nodes in the matrix but still allows them to be accessible when needed.  When we need to uncover these nodes, we perform the covering steps in reverse: Iterate **up** from column header &rarr; Iterate **left** through each row &rarr; Relink the covered nodes to their neighbors.
+The following are my cover and uncover functions in Python. Covering starts by *unlinking* the column header from its horizontal neighbors so they can no longer reference the covered column. We then iterate **down** from the column header and **right** through each row, unlinking the vertical neighbors of each node.  The column can longer be accessed by iterating horizontally, and the nodes can no longer be accessed by iterating vertically.  This *hides* these nodes in the matrix but still allows them to be accessible when needed.  When we need to uncover these nodes, we perform the covering steps in reverse: Iterate **up** from column header &rarr; Iterate **left** through each row &rarr; Relink the covered nodes to their neighbors.
 <table>
 <tr>
 <th>Cover</th>
@@ -105,7 +105,7 @@ def uncover(node: Node) -> None:
 
 - **Check if the matrix is empty:** If the matrix is empty, the solution has been found and the current partial solution is the solution
 
-- **Select a column:** Selecting the column with the least number of nodes will result in the fewest number of iterations.  If this column has zero nodes, then this search branch has failed.  The algorithm must backtrack and uncover the nodes that were covered during the last iteration.
+- **Select a column:** Selecting the column with the fewest number of nodes will result in the fewest iterations.  If this column has zero nodes, then this search branch has failed.  The algorithm must backtrack and uncover the nodes that were covered during the last iteration.
 
 - **Select partial solution from column:** Once a column with nodes is selected, one of the rows in the column is selected as a partial solution.
 
@@ -113,16 +113,16 @@ def uncover(node: Node) -> None:
 
 - **Repeat** this algorithm on the newly covered matrix
 
-Returning to the first example from above, we can step through the algorithm and view the state of the matrix along the way.  Column 0 is selected since it has the fewest number of nodes (2). Row 0 is then selected as a partial solution since its the first node in the column. Row 0 has nodes in columns 0, 3, and 6. All 3 of these columns need to be covered. The following image shows the matrix after covering the Row 0 partial solution.  
+Returning to the 6x7 matrix example from above, we can step through the algorithm and visualize the updated matrix along the way.  Column 0 is selected since it has the fewest number of nodes (2). Row 0 is then selected as a partial solution since its the first row in the column. Row 0 has nodes in columns 0, 3, and 6. All 3 of these columns need to be covered using the method shown above. The following image shows the matrix after covering the Row 0 partial solution.  
 
 Unsolved | Select Row 0 | Row 0 Covered
 :-:|:-:|:-:
 ![begin](https://user-images.githubusercontent.com/35941942/173422509-29c6adaf-f5c1-4b35-841a-2588c4b783d7.png) | ![r0](https://user-images.githubusercontent.com/35941942/173422343-ddca42de-f01b-49bc-a5af-39f1098f6062.png) | ![uncover](https://user-images.githubusercontent.com/35941942/173422355-e2f7d777-39bb-4f65-bed1-a8d0f076213d.png)
 
-When searching on the next iteration, we will select column 1 since it has the least number of nodes. Column 1 has 0 nodes, which means Row 0 is not part of the solution and we need to uncover the Row 0 partial solution. After uncovering we are back to the original matrix but have exhausted Row 0 as a partial solution.  Row 1 is then selected since it is the next row in column 0 (the original selected column).  The algorithm covers columns 0 and 3 &rarr; Selects row 3 as a partial solution &rarr; Covers columns 2, 4, and 5 &rarr; Selects row 5 as a partial solution &rarr; Covers columns 1 and 6.  At this point the matrix is empty, meaning the search is complete and rows 1, 3, and 5 are an exact cover of this constraint matrix.
+When searching on the next iteration, we will select column 1 since it has the least number of nodes. Column 1 has 0 nodes, which means this branch of the search has failed, Row 0 is not part of the solution, and we need to uncover the Row 0 partial solution. After uncovering we are back to the original matrix but have exhausted Row 0 as a partial solution.  Row 1 is then selected since it is the next row in column 0 (the original selected column).  The algorithm covers columns 0 and 3 &rarr; Selects row 3 as a partial solution &rarr; Covers columns 2, 4, and 5 &rarr; Selects row 5 as a partial solution &rarr; Covers columns 1 and 6.  At this point the matrix is empty, meaning the search is complete and rows 1, 3, and 5 are an exact cover of this constraint matrix.
 
-Select Row 1 | Select Row 3 | Select Row 5 | Solved
-:-:|:-:|:-:|:-:
-![r1](https://user-images.githubusercontent.com/35941942/173422895-8db85e55-cf6c-4bc6-a346-ccb09d2730c1.png) | ![r3](https://user-images.githubusercontent.com/35941942/173422904-975c2ab5-5a81-426e-8c24-dd129647df26.png) | ![r5](https://user-images.githubusercontent.com/35941942/173422917-676eb4ed-28a5-4817-ab94-f2ab4ebfb101.png) | ![solved](https://user-images.githubusercontent.com/35941942/173422926-5b8a43f7-8601-4621-86d2-477310a01ee5.png)
+Select Row 1 | Select Row 3 | Select Row 5 
+:-:|:-:|:-:
+![r1](https://user-images.githubusercontent.com/35941942/173422895-8db85e55-cf6c-4bc6-a346-ccb09d2730c1.png) | ![r3](https://user-images.githubusercontent.com/35941942/173422904-975c2ab5-5a81-426e-8c24-dd129647df26.png) | ![r5](https://user-images.githubusercontent.com/35941942/173422917-676eb4ed-28a5-4817-ab94-f2ab4ebfb101.png)
 
 This algorithm can be seen in more detail using this [animated interactive web app](https://nstagman.github.io/algx_visualizer/).

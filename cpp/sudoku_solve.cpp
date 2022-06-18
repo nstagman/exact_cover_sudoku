@@ -1,5 +1,5 @@
 #include <iostream>
-#include "dlinks_matrix.h"
+#include "dlinks_matrix.hpp"
 
 
 //solve a soduku puzzle represented by an int array

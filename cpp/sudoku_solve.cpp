@@ -8,19 +8,17 @@
 //  2 - output file, solution will be written to the output file in the same format as the input file
 //      defaults to "solutions.txt"
 int main(int argc, char *argv[]){
-    char solution[81];
+    char solution[83];
     char puzzle[83];
     FILE* puzzle_file;
     FILE* solutions_file;
 
     if(argc > 1) { puzzle_file = fopen(argv[1], "r"); }
-    else { puzzle_file = fopen("puzzles.txt", "r"); }
+    else { puzzle_file = fopen("hpuzzles.txt", "r"); }
     if(argc > 2) { solutions_file = fopen(argv[2], "w"); }
     else { solutions_file = fopen("solutions.txt", "w"); }
 
     while(fgets(puzzle, 83, puzzle_file) != 0){
-        puzzle[81] = 0;
-
         if(solve_puzzle(puzzle)) {
             int index, value;
             for(int i=0; i<81; i++){
@@ -29,11 +27,10 @@ int main(int argc, char *argv[]){
                 solution[index] = value;
             }
         }
-        
+        puzzle[81] = ','; puzzle[82] = '\0';
+        solution[81] = '\n'; solution[82] = '\0';
         fputs(puzzle, solutions_file);
-        fputs(",", solutions_file);
         fputs(solution, solutions_file);
-        fputs("\n", solutions_file);
     }
     return 0;
 }

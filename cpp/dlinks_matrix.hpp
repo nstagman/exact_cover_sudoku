@@ -2,7 +2,6 @@
 
 //Toroidally linked matrix for solving sudoku puzzles via algorithm x
 //Optimized to only work with standard 9x9 puzzles
-
 typedef struct node Node;
 struct node{
     int row, col, count;
@@ -10,9 +9,9 @@ struct node{
 };
 
 Node cols[324][10];
+Node counts[10];
 Node* solution_stack[81];
 int solution_ptr;
-Node counts[10];
 
 
 //selects next available node in specified column
@@ -201,11 +200,11 @@ bool solve_puzzle(char* sudoku_list){
     for(int i=0; i<324; ++i){
         cols[i][0].count = 0;
     }
-    solution_ptr = 0;
     for(int i=0; i<11; ++i){
         counts[i].right = &counts[i];
         counts[i].left = &counts[i];
     }
+    solution_ptr = 0;
 
     //iterate through sudoku list
     int row = 0;
@@ -246,10 +245,12 @@ bool solve_puzzle(char* sudoku_list){
         cols[i][n1->count].down = n1;
     }
 
+    //cover each column of known partial solutions
     for(int i=0; i<init_ptr; ++i){
         initial_cover(init_covered[i]);
     }
 
+    //assign the column headers to their respective lists based on node count
     for(int i=0; i<324; ++i){
         if(cols[i][0].count > 9) { continue; }
         n1 = &cols[i][0];

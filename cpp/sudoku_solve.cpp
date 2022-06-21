@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
     FILE* solutions_file;
 
     if(argc > 1) { puzzle_file = fopen(argv[1], "r"); }
-    else { puzzle_file = fopen("hpuzzles.txt", "r"); }
+    else { puzzle_file = fopen("puzzles.txt", "r"); }
     if(argc > 2) { solutions_file = fopen(argv[2], "w"); }
     else { solutions_file = fopen("solutions.txt", "w"); }
 

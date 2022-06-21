@@ -1,41 +1,31 @@
 #pragma once
-#include <iostream>
 
 //Toroidally linked matrix for solving sudoku puzzles via algorithm x
 //Optimized to only work with standard 9x9 puzzles
 
 typedef struct node Node;
-typedef struct column Column;
-
 struct node{
     int row, col, count;
     Node* up, *down, *left, *right;
 };
 
-struct column{
-    int node_ptr;
-    Node nodes[10];
-};
-
-Column cols[324];
+Node cols[324][10];
 Node* solution_stack[81];
 int solution_ptr;
-bool solved;
-Node counts[11];
+Node counts[10];
 
 
 //selects next available node in specified column
 //updates node attributes, updates node.up and node.up.down ptrs
 //returns pointer to selected node
 Node* insert(int row, int col){
-    int ptr = cols[col].node_ptr;
-    Node* insert = &cols[col].nodes[ptr];
+    int ptr = cols[col][0].count+1;
+    Node* insert = &cols[col][ptr];
     insert->row = row;
     insert->col = col;
-    insert->up = &cols[col].nodes[ptr-1];
+    insert->up = &cols[col][ptr-1];
     insert->up->down = insert;
-    ++cols[col].node_ptr;
-    ++cols[col].nodes[0].count;
+    ++cols[col][0].count;
     return insert;
 }
 
@@ -50,7 +40,7 @@ Node* select_min_column(){
 
 //cover a column of node n for dancing links algorithm
 void cover(Node* n){
-    Node* col_node = &cols[n->col].nodes[0];
+    Node* col_node = &cols[n->col][0];
     //unlink left and right neighbors of col from col
     col_node->right->left = col_node->left;
     col_node->left->right = col_node->right;
@@ -61,7 +51,7 @@ void cover(Node* n){
         for(Node* horiz_itr=vert_itr->right; horiz_itr!=vert_itr; horiz_itr=horiz_itr->right){
             horiz_itr->up->down = horiz_itr->down;
             horiz_itr->down->up = horiz_itr->up;
-            Node* cn = &cols[horiz_itr->col].nodes[0];
+            Node* cn = &cols[horiz_itr->col][0];
             --cn->count;
             //if column cn is not covered - push it into new list
             if(cn->right->left == cn){
@@ -78,7 +68,7 @@ void cover(Node* n){
 
 //uncover a column of node n for dancing links algorithm
 void uncover(Node* n){
-    Node* col_node = &cols[n->col].nodes[0];
+    Node* col_node = &cols[n->col][0];
     //relink left and right neighbors of col to col
     col_node->right = counts[col_node->count].right;
     col_node->left = &counts[col_node->count];
@@ -91,7 +81,7 @@ void uncover(Node* n){
         for(Node* horiz_itr=vert_itr->left; horiz_itr!=vert_itr; horiz_itr=horiz_itr->left){
             horiz_itr->up->down = horiz_itr;
             horiz_itr->down->up = horiz_itr;
-            Node* cn = &cols[horiz_itr->col].nodes[0];
+            Node* cn = &cols[horiz_itr->col][0];
             ++cn->count;
             //if column cn is not covered - push it into new list
             if(cn->right->left == cn){
@@ -112,7 +102,7 @@ void uncover(Node* n){
 bool alg_x_rec_search(){
     Node* selected_col = select_min_column();
     //if no column in matrix, then a solution has been found
-    if(selected_col == 0) { return solved = true; }
+    if(selected_col == 0) { return true; }
     //if selected column has 0 Nodes, then this branch has failed
     if(selected_col->count < 1) { return false; }
 
@@ -145,11 +135,11 @@ bool alg_x_rec_search(){
 
         vert_itr = vert_itr->down;
     }
-    return solved;
+    return false;
 }
 
 //iterative implementation of the search
-[[gnu::always_inline]] bool alg_x_itr_search(int start_sols){
+[[gnu::always_inline]] bool alg_x_itr_search(int num_start_sols){
     Node* selected_col, *vert_itr, *horiz_itr;
 
     //select initial column to begin the search
@@ -173,7 +163,7 @@ bool alg_x_rec_search(){
 
         //uncover last partial solution
         do{
-            if(--solution_ptr < start_sols) { return false; }
+            if(--solution_ptr < num_start_sols) { return false; }
 
             vert_itr = solution_stack[solution_ptr];
             horiz_itr = vert_itr->left;
@@ -182,30 +172,19 @@ bool alg_x_rec_search(){
             }while((horiz_itr = horiz_itr->left) != vert_itr->left);
             vert_itr = vert_itr->down;
         //if next column is a header, then continue to uncover
-        }while(vert_itr == &cols[vert_itr->up->col].nodes[0]);
+        }while(vert_itr == &cols[vert_itr->up->col][0]);
     }
 }
 
-void quick_cover(Node* n){
-    int c = n->col;
-    Node* col_node = &cols[c].nodes[0];
-    col_node->count = 1000;
-    //iterate through each Node in col top to bottom
-    Node* vert_itr = col_node->down;
-    while(vert_itr != NULL && vert_itr->col == c){
-        //iterate through row left to right
-        //for each Node in this row, unlink top and bottom neighbors and reduce count of that column
+//cover the known solutions to the puzzle when initializing the matrix
+void initial_cover(Node* c){
+    c->count = 100;
+    for(Node* vert_itr=c->down; vert_itr!=c; vert_itr=vert_itr->down){
         for(Node* horiz_itr=vert_itr->right; horiz_itr!=vert_itr; horiz_itr=horiz_itr->right){
-            if(horiz_itr->down != NULL && horiz_itr->down->up == horiz_itr){
-                horiz_itr->up->down = horiz_itr->down;
-                horiz_itr->down->up = horiz_itr->up;
-            }
-            else{
-                --cols[horiz_itr->col].node_ptr;
-            }
-            --cols[horiz_itr->col].nodes[0].count;
+            horiz_itr->up->down = horiz_itr->down;
+            horiz_itr->down->up = horiz_itr->up;
+            --cols[horiz_itr->col][0].count;
         }
-        vert_itr = vert_itr->down;
     }
 }
 
@@ -220,10 +199,8 @@ bool solve_puzzle(char* sudoku_list){
 
     //initialize matrix
     for(int i=0; i<324; ++i){
-        cols[i].nodes[0].count = 0;
-        cols[i].node_ptr = 1;
+        cols[i][0].count = 0;
     }
-    solved = false;
     solution_ptr = 0;
     for(int i=0; i<11; ++i){
         counts[i].right = &counts[i];
@@ -232,57 +209,54 @@ bool solve_puzzle(char* sudoku_list){
 
     //iterate through sudoku list
     int row = 0;
-    Node* r1, *r2, *r3, *r4;
+    Node* n1, *n2, *n3, *n4;
+    Node* init_covered[324];
+    int init_ptr = 0;
     for(int i=0; i<81; ++i){
         //if no value assigned to cell, populate all rows representing all possible candidate values for cell
         if(sudoku_list[i] - '0' == 0){
             for(int j=0; j<9; ++j){
                 row = i*9+j;
-                r1 = insert(row, one_c[row]);
-                r2 = insert(row, row_c[row]);
-                r3 = insert(row, col_c[row]);
-                r4 = insert(row, box_c[row]);
-                r1->right = r2; r2->right = r3; r3->right = r4; r4->right = r1;
-                r4->left = r3; r3->left = r2; r2->left = r1; r1->left = r4;
+                n1 = insert(row, one_c[row]);
+                n2 = insert(row, row_c[row]);
+                n3 = insert(row, col_c[row]);
+                n4 = insert(row, box_c[row]);
+                n1->right = n2; n2->right = n3; n3->right = n4; n4->right = n1;
+                n4->left = n3; n3->left = n2; n2->left = n1; n1->left = n4;
             }
         }
-        //otherwise only populate the row representing the known assigned value
+        //otherwise mark each of the 4 columns as part of the initial solution
         else{
             row = i*9+sudoku_list[i]-1-'0';
-            r1 = insert(row, one_c[row]);
-            r2 = insert(row, row_c[row]);
-            r3 = insert(row, col_c[row]);
-            r4 = insert(row, box_c[row]);
-            r1->right = r2; r2->right = r3; r3->right = r4; r4->right = r1;
-            r4->left = r3; r3->left = r2; r2->left = r1; r1->left = r4;
+            init_covered[init_ptr++] = &cols[one_c[row]][0];
+            init_covered[init_ptr++] = &cols[row_c[row]][0];
+            init_covered[init_ptr++] = &cols[col_c[row]][0];
+            init_covered[init_ptr++] = &cols[box_c[row]][0];
+
+            n1 = &cols[one_c[row]][cols[one_c[row]][0].count+1];
+            n1->row = row;
+            solution_stack[solution_ptr++] = n1;
         }
     }
 
-    // for(int i=0; i<solution_ptr; ++i){
-    //     Node* sol_node = solution_stack[i];
-    //     Node* sol_itr = sol_node;
-    //     do{
-    //         quick_cover(sol_itr);
-    //     }while((sol_itr = sol_itr->right) != sol_node);
-    // }
-
-    // for(Node* covered_col=counts[10].right; covered_col!=&counts[10]; covered_col=covered_col->right){
-    //     quick_cover(covered_col);
-    // }
-
-
     //finalize toroidal structure of columns
     for(int i=0; i<324; ++i){
-        int ptr = cols[i].node_ptr - 1;
-        Node* cn = &cols[i].nodes[0];
-        cn->up = &cols[i].nodes[ptr];
-        cols[i].nodes[ptr].down = cn;
+        n1 = &cols[i][0];
+        n1->up = &cols[i][n1->count];
+        cols[i][n1->count].down = n1;
+    }
 
-        if(cols[i].nodes[0].count > 9) { continue; }
-        cn->left = &counts[cn->count];
-        cn->right = counts[cn->count].right;
-        counts[cn->count].right->left = cn;
-        counts[cn->count].right = cn;
+    for(int i=0; i<init_ptr; ++i){
+        initial_cover(init_covered[i]);
+    }
+
+    for(int i=0; i<324; ++i){
+        if(cols[i][0].count > 9) { continue; }
+        n1 = &cols[i][0];
+        n1->left = &counts[n1->count];
+        n1->right = counts[n1->count].right;
+        counts[n1->count].right->left = n1;
+        counts[n1->count].right = n1;
     }
 
     return alg_x_itr_search(solution_ptr);
